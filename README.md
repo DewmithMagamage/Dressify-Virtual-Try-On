@@ -1,4 +1,4 @@
-#👗 Dressify-Virtual-Try-On
+# 👗 Dressify-Virtual-Try-On
 Dressify is a 🌐 virtual try-on web application designed to transform the online fashion shopping experience by allowing users to visualize how clothing items will look and fit on their own body. Leveraging 🧠 machine learning and 📸 image processing techniques, Dressify bridges the gap between in-store and e-commerce shopping by providing realistic garment previews from multiple angles. The platform aims to 🌱 reduce return rates, boost 🛍️ customer satisfaction, and support 🌍 sustainability in the fashion industry.
 
 Key Features
