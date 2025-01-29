@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/Signup&login/login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="login-box">
+      <h2>Log In</h2>
+      <div class="social-login">
+        <button class="google-btn">Log in with Google</button>
+        <button class="facebook-btn">Log in with Facebook</button>
+      </div>
+      <p class="or-divider">- OR -</p>
+      <form>
+        <div class="input-field">
+          <input type="text" placeholder="Full Name" required>
+        </div>
+        <div class="input-field password-field">
+          <input type="password" placeholder="Password" id="password-input" required>
+          <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+        <button type="submit" class="login-btn">Log In</button>
+      </form>
+      <p class="signup-link">Don’t have an account? <a href="#">Sign up</a></p>
+    </div>
+  </div>
+</body>
+<script src="/Signup&login/login.js"></script>
+</html>

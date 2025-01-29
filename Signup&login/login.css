@@ -1,0 +1,136 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('/IMAGES/background.png') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .container {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    width: 650px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+  }
+  
+  
+  h2 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .social-login {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .google-btn, .facebook-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .google-btn {
+    background: #fff;
+    color: #333;
+  }
+  
+  .google-btn:hover {
+    background: #ddd;
+  }
+  
+  .facebook-btn {
+    background: #1877F2;
+    color: #fff;
+  }
+  
+  .facebook-btn:hover {
+    background: #145db2;
+  }
+  
+  .or-divider {
+    color: #ccc;
+    margin: 15px 0;
+  }
+  
+  .input-field {
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .input-field input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  .password-field .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+  }
+  
+  .login-btn {
+    background: #fff;
+    color: #333;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+  }
+  
+  .login-btn:hover {
+    background: #ddd;
+  }
+  
+  .signup-link {
+    color: #fff;
+    font-size: 14px;
+  }
+  
+  .signup-link a {
+    color: #42a5f5;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  .language-dropdown {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .language-dropdown select {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    outline: none;
+  }
+  
