@@ -66,9 +66,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
     width: 90%;
     max-width: 400px;
@@ -78,4 +78,20 @@
   #cart-popup.hidden {
     display: none;
   }
-  
+
+  #view-cart {
+    background: linear-gradient(to right, #00c6ff, #0072ff); /* Soft gradient background */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px; /* Rounded button edges */
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for a gentle lift effect */
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#view-cart:hover {
+    background: linear-gradient(to right, #0072ff, #00c6ff); /* Hover effect with a slight color swap */
+    transform: scale(1.05); /* Slight scale-up effect on hover */
+}

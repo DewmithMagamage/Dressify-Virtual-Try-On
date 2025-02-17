@@ -22,7 +22,6 @@ body {
   text-align: center;
 }
 
-
 h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
@@ -46,12 +45,14 @@ h2 {
   cursor: pointer;
   width: 48%;
   font-size: 0.9rem;
-  gap: 8px;
+  gap: 10px;
   transition: 0.3s;
 }
 
 .social-btn img {
   width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
 .social-btn:hover {
@@ -113,3 +114,4 @@ h2 {
   text-decoration: none;
   font-weight: bold;
 }
+

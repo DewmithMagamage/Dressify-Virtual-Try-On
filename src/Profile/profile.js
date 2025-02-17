@@ -11,7 +11,6 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <header className="header">
-        <img src="/IMAGES/logo.png" alt="Logo" className="logo" />
         <div className="icons">
           <img src="/IMAGES/bell-icon.png" alt="Notifications" className="icon" />
           <img src="/IMAGES/person.png" alt="User" className="profile-icon" />

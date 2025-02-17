@@ -22,9 +22,6 @@ const Shop = () => {
 
   return (
     <div className="container">
-      <div className="logo">
-        <img src="../IMAGES/logo.png" alt="Logo" />
-      </div>
       <h2>Shop</h2>
       <div id="cart-container">
         <button id="view-cart" onClick={showCart}>
