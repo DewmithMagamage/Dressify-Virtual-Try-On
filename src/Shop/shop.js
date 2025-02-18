@@ -1,31 +1,25 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import './shop.css';
 
 const Shop = () => {
   const [cart, setCart] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [cartVisible, setCartVisible] = useState(false);
 
   const addToCart = (productName, productPrice) => {
-    setCart((prevCart) => [...prevCart, { name: productName, price: productPrice }]);
-    setTotalPrice((prevPrice) => prevPrice + productPrice);
+    setCart((prevCart) => {
+      const updatedCart = [...prevCart, { name: productName, price: productPrice }];
+      return updatedCart;
+    });  
     alert(`${productName} added to cart!`);
   };
-
-  const showCart = () => {
-    document.getElementById('cart-popup').classList.remove('hidden');
-  };
-
-  const hideCart = () => {
-    document.getElementById('cart-popup').classList.add('hidden');
-  };
-
+ 
   return (
     <div className="container">
       <h2>Shop</h2>
       <div id="cart-container">
-        <button id="view-cart" onClick={showCart}>
-          🛒 View Cart (<span id="cart-count">{cart.length}</span>)
+        <button id="view-cart" onClick={() => setCartVisible(true)}>
+          🛒 View Cart ({cart.length})
         </button>
       </div>
       <div className="product-grid">
@@ -44,26 +38,35 @@ const Shop = () => {
             <button className="action-btn add-to-cart" onClick={() => addToCart(product.name, product.price)}>
               Add to Cart
             </button>
-            <button className="action-btn try-on">Try On</button>
+
+            <button className="action-btn try-on">
+              <Link to="/try-on" style={{ textDecoration: 'none', color: 'inherit'}}>
+              Try On</Link>
+            </button>
           </div>
         ))}
       </div>
-      <div id="cart-popup" className="hidden">
-        <h3>Shopping Cart</h3>
-        <div id="cart-items">
-          {cart.map((item, index) => (
-            <div key={index}>
-              {item.name} - ${item.price.toFixed(2)}
-            </div>
-          ))}
-        </div>
-        <p id="total-price">Total: ${totalPrice.toFixed(2)}</p>
-        <button id="close-cart" onClick={hideCart}>
-          Close
-        </button>
+
+      {cartVisible && (
+        <div id="cart-popup" className="cart-popup">
+          <h3>Shopping Cart</h3>
+          <div id="cart-items">
+            {cart.length > 0 ? (
+              cart.map((item, index) => (
+                <div key={index}>
+                  <p>{item.name} - ${item.price.toFixed(2)}</p>
+                </div>
+              ))
+            ) : (
+              <p>Your cart is empty.</p>
+            )}
+            </div>  
+              <p id="total-price">Total: ${cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)}</p>
+              <button id="close-cart" onClick={() => setCartVisible(false)}>Close</button>
+          </div>    
+        )}
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default Shop;

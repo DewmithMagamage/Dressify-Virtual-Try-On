@@ -62,21 +62,33 @@
   /* Cart Popup */
   #cart-popup {
     position: fixed;
+    color: black;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
-    width: 90%;
+    width: 80%;
     max-width: 400px;
     z-index: 10;
+    display: block;
   }
-  
-  #cart-popup.hidden {
-    display: none;
+
+  #cart-popup h3{
+    margin-bottom: 8px;
+  }
+
+  #cart-items p{
+    font-size: 14px;
+  }
+
+  #total-price {
+    margin-top: 5px;
+    margin-bottom: 8px;
+    font-weight: bold;
   }
 
   #view-cart {
