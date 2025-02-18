@@ -119,12 +119,12 @@ body {
   }
   
   .edit-btn {
-    background: #ffd700;
+    background: #4CAF50;
     color: #000;
   }
 
   .edit-btn:hover {
-    background: #e6c200;
+    background: #2db432;
 }
   
   .delete-btn {
