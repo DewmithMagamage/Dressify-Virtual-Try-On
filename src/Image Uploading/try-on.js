@@ -2,13 +2,14 @@ import { useState } from "react";
 import "./try-on.css";
 
 const TryOn = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([null, null, null, null]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [largeBoxIndex, setLargeBoxIndex] = useState(0);
+  const [isAvatarGenerated, setIsAvatarGenerated] = useState(false);
 
-  const handleFileChange = (event) => {
+  const handleFileChanges = (event, index) => {
     const file = event.target.files[0];
-    setSelectedFile(null);
-    setErrorMessage(""); // Fix to match the state name
+    setErrorMessage(""); 
 
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -17,50 +18,70 @@ const TryOn = () => {
       }
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedFile(e.target.result);
+        const newUploadedImages = [...uploadedImages];
+        newUploadedImages[index] = e.target.result;
+        setUploadedImages(newUploadedImages);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(event.target.files[0]);
     }
   };
 
-  const handleUpload = () => {
-    if (!selectedFile) {
-      setErrorMessage("Please select a file to upload");
+  const handleNextStep = () => {
+    if (uploadedImages[largeBoxIndex] === null) {
+      setErrorMessage("Please upload an image"); // Show error inside the big box
       return;
     }
+    setErrorMessage(""); // Clear error
+    setLargeBoxIndex((prevIndex) => (prevIndex + 1) % 4); // Move to the next box
+  };
 
-    setTimeout(() => {
-      alert("File uploaded successfully!");
-    }, 1000);
+  const handleGenerateAvatar = () => {
+    setIsAvatarGenerated(true);
+    alert("Avatar generated successfully!");
   };
 
   return (
     <div className="frosted-container">
+      <h2 className="upload-title">Upload Images</h2>
       {/* Upload Section */}
-      <div className="upload-container">
-        <h2>Upload Your Image</h2>
-        <div className="upload-box" onClick={() => document.getElementById("fileInput").click()}>
-          {selectedFile ? (
-            <img src={selectedFile} alt="Uploaded" style={{ width: "200px", height: "200px", objectFit: "cover", borderRadius: "10px" }} />
-          ) : (
-            <span>Click to Upload</span>
-          )}
-          <input id="fileInput" type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
-        </div>
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-      </div>
+      <div class="upload-section">
+        <div className="upload-container">
+          {uploadedImages.map((image, index) => (
+            <div
+            key={index}
+            className={`upload-box ${largeBoxIndex === index ? "large" : ""}`}
+            onClick={() => largeBoxIndex === index && document.getElementById(`fileInput${index}`).click()} 
+            >
+              {image ? (
+                <img src={image} alt="Uploaded" />
+            ) : (
+              <span>{largeBoxIndex === index ? (errorMessage && uploadedImages[index] === null ? "Please upload an image" : "Click to upload") : ""}</span> // Only show error in the large box
+            )}
+            <input
+              id={`fileInput${index}`}
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChanges(e, index)}
+              style={{ display: "none" }}
+            />
+          </div>
+          ))}  
 
-      {/* Instructions Section */}
-      <div className="instructions-container"> {/* Fixed typo: 'instructions-conatiner' */}
-        <h2>How It Works</h2>
-        <p>Upload an image to try on clothing virtually.</p>
-        <div className="thumbnail-container">
-          <div className="thumbnail"><img src="/IMAGES/sample1.png" alt="Sample 1" /></div>
-          <div className="thumbnail"><img src="/IMAGES/sample2.png" alt="Sample 2" /></div>
-          <div className="thumbnail"><img src="/IMAGES/sample3.png" alt="Sample 3" /></div>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
-        <button className="next-step-btn" onClick={handleUpload}>Next Step</button>
-      </div>
+
+        {/* Instructions Section */}
+        <div className="instructions-container"> 
+          <h2>How It Works</h2>
+          <p>Upload an image to try on clothing virtually.</p>
+          <button className="next-step-btn" 
+            onClick={uploadedImages.filter(img => img !== null).length === 4 ? handleGenerateAvatar : handleNextStep}
+            style={{ marginLeft: "20px", marginTop: "20px" }}
+          >  
+            {isAvatarGenerated ? "Avatar Generated!" : "Next Step"}
+          </button>
+        </div>
+      </div>  
     </div>
   );
 };

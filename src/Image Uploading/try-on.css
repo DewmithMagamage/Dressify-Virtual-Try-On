@@ -25,7 +25,9 @@
     border-radius: 20px;
     padding: 20px ;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-satrt;
     width: 100%;
     max-width: 1200px;
     height: auto;
@@ -73,27 +75,33 @@
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2), -4px -4px 6px rgba(255, 255, 255, 0.8);
   }
   
-  
-  /* Left Side (Image Upload Section) */
-  .upload-container {
-    width: 45%;
+  .upload-section{
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .upload-container {
+    width: 55%;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     text-align: center;
+    gap: 20px;
   }
   
-  .upload-container h2 {
+  .upload-title {
     font-size: 1.8rem;
-    margin-bottom: 10px;
+    text-align: center;
+    margin-bottom: 20px;
     color: #333;
   }
   
   .upload-box {
-    border: 2px dashed #ccc;
-    width: 80%;
-    height: 300px;
+    border: 2px solid #757171;
+    width: 120px;
+    height: 140px;
     background: rgba(255, 255, 255, 0.8);
     display: flex;
     flex-direction: column;
@@ -103,18 +111,29 @@
     cursor: pointer;
     transition: all 0.3s;
   }
+
+  .upload-box.large {
+    border: 2px dashed #757171;
+    width: 300px;
+    height: 350px;
+    position: relative;
+    transition: all 0.3s;
+  }
   
-  .upload-box:hover {
+  .upload-box.large:hover {
     border-color: #4CAF50;
   }
   
   .upload-box img {
-    max-width: 20%;
-    max-height: 20%;
-    margin-bottom: 60px;
+    max-width: 95%;
+    max-height: 95%;
   }
   
   .upload-box span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     font-size: 1rem;
     color: #666;
     font-weight: bold;
@@ -126,13 +145,12 @@
     margin-top: 10px;
   }
   
-  /* Right Side (Text and Thumbnails) */
   .instructions-container {
-    width: 45%;
+    width: 40%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .instructions-container h2 {
@@ -150,33 +168,6 @@
     text-align: center;
   }
   
-  .thumbnail-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .thumbnail {
-    width: 60px;
-    height: 90px;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid #ccc;
-    transition: transform 0.3s;
-  }
-  
-  .thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .thumbnail:hover {
-    transform: scale(1.1);
-    border-color: #4CAF50;
-  }
-  
-  /* Next Step Button */
   .next-step-btn {
     padding: 15px 30px;
     font-size: 1.2rem;
