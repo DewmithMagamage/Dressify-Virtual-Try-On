@@ -35,6 +35,10 @@ const TryOn = () => {
     setLargeBoxIndex((prevIndex) => (prevIndex + 1) % 4); // Move to the next box
   };
 
+  const handlePreviousStep = () => {
+    setLargeBoxIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
+  };
+
   const handleGenerateAvatar = () => {
     setIsAvatarGenerated(true);
     alert("Avatar generated successfully!");
@@ -43,6 +47,7 @@ const TryOn = () => {
   return (
     <div className="frosted-container">
       <h2 className="upload-title">Upload Images</h2>
+    
       {/* Upload Section */}
       <div class="upload-section">
         <div className="upload-container">

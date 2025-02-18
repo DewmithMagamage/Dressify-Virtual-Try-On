@@ -4,7 +4,6 @@ import './home.css';
 
 const Home = () => {
   useEffect(() => {
-    // Smooth Animation for Content on Page Load
     const content = document.querySelector('.content');
     content.style.opacity = 0;
     content.style.transform = 'translateY(20px)';
@@ -15,7 +14,6 @@ const Home = () => {
       content.style.transform = 'translateY(0)';
     }, 100);
 
-    // Button Hover Shadows (Extra Interaction)
     const buttons = document.querySelectorAll('.btn');
     buttons.forEach(button => {
       button.addEventListener('mouseenter', () => {
@@ -26,7 +24,7 @@ const Home = () => {
         button.style.boxShadow = 'none';
       });
     });
-  }, []); // Empty array ensures this runs only once when the component mounts
+  }, []); 
 
   return (
     <section className="home-section">

@@ -16,7 +16,7 @@ body {
     left: 0;
     width: 100%;
     background: rgba(0, 0, 0, 0.8);
-    padding: 10px 20px;
+    padding: 10px 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -31,7 +31,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 40px;
 }
 
 .nav-links a {

@@ -13,7 +13,6 @@ const Profile = () => {
       <header className="header">
         <div className="icons">
           <img src="/IMAGES/bell-icon.png" alt="Notifications" className="icon" />
-          <img src="/IMAGES/person.png" alt="User" className="profile-icon" />
         </div>
       </header>
 
@@ -49,10 +48,10 @@ const Profile = () => {
         <div className="user-images">
           <h3>User Images</h3>
           <div className="image-gallery">
-            <img src="/IMAGES/37d237ca-28b2-4b17-903d-a32e7c579e49.jpeg" alt="User Image" />
-            <img src="/IMAGES/37d237ca-28b2-4b17-903d-a32e7c579e49.jpeg" alt="User Image" />
-            <img src="/IMAGES/d666eecd-f398-40d6-87c7-1e97cefdebd4.jpeg" alt="User Image" />
-            <img src="/IMAGES/ea9c8ed4-8675-45c6-a6ba-fa98046f4555.jpeg" alt="User Image" />
+            <img src="/IMAGES/front-side.jpeg" alt="User Image" />
+            <img src="/IMAGES/left-side.jpeg" alt="User Image" />
+            <img src="/IMAGES/right-side.jpg" alt="User Image" />
+            <img src="/IMAGES/back-side.jpeg" alt="User Image" />
           </div>
         </div>
 
