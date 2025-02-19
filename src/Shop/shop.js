@@ -5,13 +5,39 @@ import './shop.css';
 const Shop = () => {
   const [cart, setCart] = useState([]);
   const [cartVisible, setCartVisible] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const showMessage = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(""), 2000); 
+  };
 
   const addToCart = (productName, productPrice) => {
-    setCart((prevCart) => {
-      const updatedCart = [...prevCart, { name: productName, price: productPrice }];
-      return updatedCart;
-    });  
-    alert(`${productName} added to cart!`);
+    setCart((prevCart) => [...(prevCart || []), { name: productName, price: productPrice }]);
+      showMessage(`${productName} added to cart!`); 
+  };
+
+  const removeFromCart = (productName) => {
+    setCart((prevCart) => prevCart.filter(item => item.name !== productName))
+    showMessage(`${productName} removed from cart!`);
+  };
+
+  const increaseQuantity = (productName) => {
+    setCart((prevCart) => 
+      prevCart.map(item => 
+        item.name === productName ? { ...item, quantity: (item.quantity || 1) + 1 } : item
+      )
+    );
+  };
+
+  const decreaseQuantity = (productName) => {
+    setCart((prevCart) => 
+      prevCart.map(item => 
+        item.name === productName && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
   };
  
   return (
@@ -40,7 +66,7 @@ const Shop = () => {
             </button>
 
             <button className="action-btn try-on">
-              <Link to="/try-on" style={{ textDecoration: 'none', color: 'inherit'}}>
+              <Link to="/body" style={{ textDecoration: 'none', color: 'inherit'}}>
               Try On</Link>
             </button>
           </div>
@@ -55,6 +81,9 @@ const Shop = () => {
               cart.map((item, index) => (
                 <div key={index}>
                   <p>{item.name} - ${item.price.toFixed(2)}</p>
+                  <button onClick={() => increaseQuantity(item.name)}>+</button>
+                  <button onClick={() => decreaseQuantity(item.name)}>-</button>
+                  <button onClick={() => removeFromCart(item.name)}>Delete</button>              
                 </div>
               ))
             ) : (
@@ -65,7 +94,9 @@ const Shop = () => {
               <button id="close-cart" onClick={() => setCartVisible(false)}>Close</button>
           </div>    
         )}
-        </div>      
+
+        {message && <div className="popup">{message} </div>}
+      </div>      
     );
   };
 

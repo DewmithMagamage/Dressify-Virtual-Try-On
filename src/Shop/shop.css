@@ -1,15 +1,22 @@
 .container {
   width: 90vw;
   max-width: 1600px;
-  position: fixed;
+  position: relative;
+}
+
+.container h2 {
+  color: black;
 }
 
 /* Cart button moved to the corner */
 #cart-container {
     position: absolute;
-    top: 10px;
+    top: 0px;
     right: 20px;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
   }
   
   /* Product grid styles */
@@ -59,8 +66,8 @@
   
   /* Unified button styles for Add to Cart and Try On */
   .action-btn {
-    background: linear-gradient(to right, #42a5f5, #1e88e5);
-    color: #fff;
+    background: rgb(248, 129, 199);
+    color: black;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
@@ -71,7 +78,7 @@
   }
   
   .action-btn:hover {
-    background: linear-gradient(to right, #1e88e5, #1565c0);
+    background: rgb(248, 129, 199);
     transform: scale(1.05);
   }
   
@@ -108,18 +115,40 @@
   }
 
   #view-cart {
-    background: linear-gradient(to right, #00c6ff, #0072ff); /* Soft gradient background */
-    color: #fff;
+    background:rgb(248, 129, 199);
+    color: black;
     border: none;
     padding: 10px 20px;
-    border-radius: 30px; /* Rounded button edges */
+    border-radius: 30px; 
     font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for a gentle lift effect */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #view-cart:hover {
-    background: linear-gradient(to right, #0072ff, #00c6ff); /* Hover effect with a slight color swap */
-    transform: scale(1.05); /* Slight scale-up effect on hover */
+    background: rgb(248, 129, 199);
+    transform: scale(1.05); 
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(65, 235, 59, 0.7);
+  color: white;
+  padding: 50px 60px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.popup-message.fade-out {
+  opacity: 0;
 }

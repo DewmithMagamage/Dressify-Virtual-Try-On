@@ -4,23 +4,21 @@ import './App.css';
 import Home from './Home/home';
 import Profile from './Profile/profile';
 import Shop from './Shop/shop';
-import Login from "./Signup&login/login";
-import Signup from "./Signup&login/signup";
-import TryOn from './Image Uploading/try-on';
+import Body from "./Upload/body";
+import Clothes from "./Upload/clothes";
 import Navbar from './Components/navbar';
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar /> {/* Add Navbar */}
+        <Navbar /> 
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/try-on" element={<TryOn />} />
+          <Route path="/body" element={<Body />} />
+          <Route path="/clothes" element={<Clothes />} />
         </Routes>
       </div>
     </Router>

@@ -38,7 +38,7 @@ const Home = () => {
           ensuring an inclusive experience for all users.
         </p>
         <div className="btn-group">
-          <Link to="/try-on" className="btn">Try-On</Link>  
+          <Link to="/body" className="btn">Try-On</Link>  
           <Link to="/shop" className="btn">Shop Now</Link>
         </div>
       </div>
