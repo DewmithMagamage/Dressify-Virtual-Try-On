@@ -11,7 +11,7 @@ import { client } from '@gradio/client';
 import { Blob } from 'blob-polyfill';
 
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = dirname(_filename);
+const __dirname = dirname(__filename);
 
 // Initialize express app
 const app = express();
@@ -67,11 +67,12 @@ const validateImage = (file) => {
   }
 
   if (!CONFIG.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-    throw new Error(${file.originalname} must be a JPEG or PNG image);
+    throw new Error(`${file.originalname} must be a JPEG or PNG image`);
+
   }
 
   if (file.size > CONFIG.MAX_FILE_SIZE) {
-    throw new Error(${file.originalname} exceeds the 5MB size limit);
+    throw new Error(`${file.originalname} exceeds the 5MB size limit`);
   }
 };
 
@@ -87,7 +88,7 @@ const processImages = async (files) => {
   
   while (retries < CONFIG.MAX_RETRIES) {
     try {
-      console.log(Processing attempt ${retries + 1}/${CONFIG.MAX_RETRIES});
+      console.log(`Processing attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
       
       const gradioApp = await client("yisol/IDM-VTON");
       console.log('Gradio client initialized successfully');
@@ -114,10 +115,10 @@ const processImages = async (files) => {
       
     } catch (error) {
       retries++;
-      console.error(Attempt ${retries} failed:, error);
+      console.error(`Attempt ${retries} failed:`, error);
       
       if (retries === CONFIG.MAX_RETRIES) {
-        throw new Error(Failed to process images after ${CONFIG.MAX_RETRIES} attempts: ${error.message});
+        throw new Error(`Failed to process images after ${CONFIG.MAX_RETRIES} attempts: ${error.message}`);
       }
       
       // Wait before retrying
@@ -132,9 +133,9 @@ const cleanupFiles = (files) => {
     fileArray.forEach(file => {
       try {
         fs.unlinkSync(file.path);
-        console.log(Cleaned up file: ${file.path});
+        console.error(`Error cleaning up file ${file.path}:`, error);
       } catch (error) {
-        console.error(Error cleaning up file ${file.path}:, error);
+        console.log(`Cleaned up file: ${file.path}`);
       }
     });
   });
@@ -225,9 +226,9 @@ app.get("/", (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(Server running on http://localhost:${PORT});
-  console.log(Health check available at http://localhost:${PORT}/health);
-  console.log(Frontend URL: http://localhost:3000);
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Health check available at http://localhost:${PORT}/health`);
+  console.log(`Frontend URL: http://localhost:3000`);
 });
 
 // Error handling
