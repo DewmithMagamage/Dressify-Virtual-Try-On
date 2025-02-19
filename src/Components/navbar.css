@@ -42,7 +42,9 @@ body {
 }
 
 .nav-links a:hover {
-    color: #ffd700;
+    color: rgb(238, 66, 132);
+    font-weight: bold;
+    transform: translateY(-3px);
 }
 
 .profile-container {

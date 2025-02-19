@@ -24,11 +24,11 @@ const Shop = () => {
       </div>
       <div className="product-grid">
         {[
-          { name: 'Product 1', price: 10, imgSrc: '../IMAGES/product1.jpg' },
-          { name: 'Product 2', price: 15, imgSrc: '../IMAGES/product2.jpg' },
-          { name: 'Product 3', price: 20, imgSrc: '../IMAGES/product3.jpg' },
-          { name: 'Product 4', price: 12, imgSrc: '../IMAGES/product4.jpg' },
-          { name: 'Product 5', price: 18, imgSrc: '../IMAGES/product5.jpg' },
+          { name: 'Product 1', price: 10, imgSrc: '../IMAGES/product1.jpeg' },
+          { name: 'Product 2', price: 15, imgSrc: '../IMAGES/product2.jfif' },
+          { name: 'Product 3', price: 20, imgSrc: '../IMAGES/product3.jfif' },
+          { name: 'Product 4', price: 12, imgSrc: '../IMAGES/product4.jfif' },
+          { name: 'Product 5', price: 18, imgSrc: '../IMAGES/product5.jfif' },
           { name: 'Product 6', price: 25, imgSrc: '../IMAGES/product6.jpg' },
         ].map((product) => (
           <div key={product.name} className="product">
@@ -65,7 +65,7 @@ const Shop = () => {
               <button id="close-cart" onClick={() => setCartVisible(false)}>Close</button>
           </div>    
         )}
-      </div>
+        </div>      
     );
   };
 
