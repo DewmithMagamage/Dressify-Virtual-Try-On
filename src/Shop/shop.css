@@ -5,7 +5,7 @@
 }
 
 .container h2 {
-  color: black;
+  color: white;
 }
 
 /* Cart button moved to the corner */
@@ -66,8 +66,8 @@
   
   /* Unified button styles for Add to Cart and Try On */
   .action-btn {
-    background: rgb(248, 129, 199);
-    color: black;
+    background: rgb(187, 19, 117);
+    color: white;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
@@ -78,8 +78,9 @@
   }
   
   .action-btn:hover {
-    background: rgb(248, 129, 199);
+    background: rgb(248, 89, 182);
     transform: scale(1.05);
+    font-weight: bold;
   }
   
   /* Cart Popup */
@@ -115,8 +116,8 @@
   }
 
   #view-cart {
-    background:rgb(248, 129, 199);
-    color: black;
+    background:rgb(187, 19, 117);
+    color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 30px; 
@@ -127,8 +128,9 @@
 }
 
 #view-cart:hover {
-    background: rgb(248, 129, 199);
+    background: rgb(248, 89, 182);
     transform: scale(1.05); 
+    font-weight: bold;
 }
 
 .popup {

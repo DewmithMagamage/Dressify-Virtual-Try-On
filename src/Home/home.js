@@ -28,6 +28,10 @@ const Home = () => {
 
   return (
     <section className="home-section">
+      <video autoPlay loop muted className="background-video">
+        <source src="/IMAGES/bg2.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className="content">
         <h1>General Instructions</h1>
         <p>

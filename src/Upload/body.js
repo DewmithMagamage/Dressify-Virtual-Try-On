@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./body.css";
 
@@ -53,7 +53,11 @@ const TryOn = () => {
   };
 
   const handleSavedImageClick = (index) => {
-    setLargeBoxIndex(index);
+    const selectedSavedImage = savedImages[index];
+    const updatedImages = [...uploadedImages];
+    updatedImages[0] = selectedSavedImage;
+    setUploadedImages(updatedImages);
+    setLargeBoxIndex(0);
   };
 
   return (
@@ -122,7 +126,7 @@ const TryOn = () => {
                 </div>
             ))}  
           </div>
-        )}
+        )},
       </div>
     </div>
   );

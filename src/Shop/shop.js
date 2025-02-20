@@ -14,7 +14,7 @@ const Shop = () => {
 
   const addToCart = (productName, productPrice) => {
     setCart((prevCart) => [...(prevCart || []), { name: productName, price: productPrice }]);
-      showMessage(`${productName} added to cart!`); 
+      showMessage(`${productName} added to cart!`);
   };
 
   const removeFromCart = (productName) => {

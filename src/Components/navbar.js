@@ -5,7 +5,9 @@ import './navbar.css';
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <img src="/IMAGES/logowhite.png" alt="Logo" className="logo" />
+     <Link to="/">
+        <img src="/IMAGES/logowhite.png" alt="Logo" className="logo" />
+      </Link>
       <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/shop">Shop</Link>
