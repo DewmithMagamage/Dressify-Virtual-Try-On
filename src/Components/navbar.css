@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: white;
+    background: rgba(173, 210, 218, 0.685);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -18,7 +18,7 @@ body {
     left: 0;
     width: 100%;
     background: rgba(0, 0, 0, 0.8);
-    padding: 10px 60px;
+    padding: 10px 95px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -27,8 +27,7 @@ body {
 }
 
 .logo {
-    height: 50px;
-    border-radius: 10%;
+    height: 70px;
 }
 
 .nav-links {

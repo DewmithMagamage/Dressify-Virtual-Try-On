@@ -17,10 +17,9 @@
     padding: 20px;
   }
   
-  /* Frosted Glass Effect */
   .frosted-container {
     backdrop-filter: blur(10px) brightness(90%);
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(29, 13, 29, 0.658);
     border-radius: 20px;
     padding: 10px ;
     display: flex;
@@ -37,7 +36,7 @@
   .upload-section{
     display: flex;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
     width: 100%;
     padding: 20px;
   }
@@ -89,7 +88,11 @@
   }
   
   .upload-box:hover {
-    border-color:rgb(187, 19, 117);
+    border-color:rgb(238, 66, 132);
+  }
+
+  .upload-box:hover span{
+    color:rgb(238, 66, 132);
   }
   
   .upload-box:hover .hover-overlay {
@@ -140,7 +143,7 @@
     padding: 10px 25px;
     font-size: 1.2rem;
     font-weight: bold;
-    background-color:rgb(187, 19, 117);
+    background-color: rgb(238, 66, 132);
     color: white;
     border: none;
     border-radius: 8px;
@@ -149,7 +152,7 @@
   }
   
   .next-step-btn:hover {
-    background-color:rgb(248, 89, 182);
+    background-color: rgb(122, 8, 52); 
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     font-weight: bold;
@@ -167,8 +170,8 @@
     align-items: center;
   }
 
-  .delete-btn {
-    background: rgb(85, 83, 83);
+  .hover-overlay .delete-btn {
+    background: rgba(73, 68, 68, 0.856);
     border: none;
     padding: 10px;
     cursor: pointer;
@@ -176,8 +179,15 @@
     border-radius: 10px;
   }
 
-  .delete-btn:hover {
+  .hover-overlay .delete-btn:hover {
     background: black;
+  }
+
+  .hover-overlay .delete-btn .delete-icon {
+    fill: white;
+    width: 30px; 
+    height: 30px; 
+    transition: transform 0.2s ease;
   }
   
   .save-btn {
@@ -187,7 +197,7 @@
     font-size: 1.2rem;
     font-weight: bold;
     background-color: rgb(84, 175, 84);
-    color: black;
+    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -195,7 +205,7 @@
   }
 
   .save-btn:hover {
-    background-color:rgb(44, 126, 44);
+    background-color:rgb(44, 126, 44); 
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
@@ -214,18 +224,6 @@
     max-width: 100%;
     overflow-x: auto;
     padding-bottom: 10px;
-    white-space: nowrap;
-    scrollbar-width: thin;
-    scrollbar-color: #757171 transparent;
-  }
-
-  .saved-image-container::-webkit-scrollbar {
-    height: 8px;
-  }
-  
-  .saved-image-container::-webkit-scrollbar-thumb {
-    background-color: #757171;
-    border-radius: 10px;
   }
 
   .saved-image {
