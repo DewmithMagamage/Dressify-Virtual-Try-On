@@ -152,12 +152,12 @@
   }
   
   .next-step-btn {
-    background-color: rgb(248, 89, 182);
+    background-color:  rgb(238, 66, 132);
     color: white;
   }
   
   .next-step-btn:hover {
-    background-color: rgb(187, 19, 117);
+    background-color:  rgb(187, 19, 117);
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }

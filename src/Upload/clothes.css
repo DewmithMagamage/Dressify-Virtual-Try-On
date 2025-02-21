@@ -152,7 +152,7 @@ body {
 }
 
 .next-step-btn:hover {
-  background-color: rgb(122, 8, 52); 
+  background-color: rgb(187, 19, 117);
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   font-weight: bold;

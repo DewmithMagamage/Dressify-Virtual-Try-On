@@ -80,7 +80,7 @@
   }
   
   .action-btn:hover {
-    background: rgb(122, 8, 52); 
+    background: rgb(187, 19, 117);
     transform: scale(1.05);
   }
   
@@ -145,8 +145,8 @@
   
   #view-cart:hover .cart, #view-cart:hover .cart-length {
     transform: scale(1.1);
-    fill: rgb(122, 8, 52); 
-    color: rgb(122, 8, 52); 
+    fill: rgb(187, 19, 117);
+    color: rgb(187, 19, 117);
   }
 
 .popup {
