@@ -18,15 +18,22 @@ const app = express();
 
 // Configure CORS for frontend
 const corsOptions = {
-  origin: 'null',  // Allow requests from local files
+  origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type', 'Content-Disposition'],
   credentials: true
 };
 
-app.use(cors({
-  origin: "http://localhost:5500", // Change this to match your frontend URL
-  credentials: true
+app.use(cors(corsOptions));
+
+// Set up static file serving BEFORE defining routes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+  }
 }));
 
 // Configure multer for file uploads
@@ -50,6 +57,24 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
+// Cleanup files function
+const cleanupFiles = (files) => {
+  try {
+    if (!files) return;
+    
+    Object.keys(files).forEach(fieldName => {
+      files[fieldName].forEach(file => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+          console.log(`Cleaned up temporary file: ${file.path}`);
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error during file cleanup:", error);
+  }
+};
+
 // Configuration
 const CONFIG = {
   MAX_RETRIES: 3,
@@ -68,7 +93,6 @@ const validateImage = (file) => {
 
   if (!CONFIG.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     throw new Error(`${file.originalname} must be a JPEG or PNG image`);
-
   }
 
   if (file.size > CONFIG.MAX_FILE_SIZE) {
@@ -82,6 +106,23 @@ const fileToBlob = async (filePath) => {
   return new Blob([buffer], { type: 'image/jpeg' });
 };
 
+// Function to download image from URL
+const downloadImage = async (url) => {
+  try {
+    console.log(`Downloading image from: ${url}`);
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    
+    if (response.status !== 200) {
+      throw new Error(`Failed to download image, status: ${response.status}`);
+    }
+    
+    return Buffer.from(response.data);
+  } catch (error) {
+    console.error('Download error:', error.message);
+    throw new Error(`Failed to download result image: ${error.message}`);
+  }
+};
+
 // Function to process images using Gradio client with retries
 const processImages = async (files) => {
   let retries = 0;
@@ -90,7 +131,7 @@ const processImages = async (files) => {
     try {
       console.log(`Processing attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
       
-      const gradioApp = await client("yisol/IDM-VTON");
+      const gradioApp = await client("yisol/IDM-VTON", { hf_token: "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" });
       console.log('Gradio client initialized successfully');
       
       const frontBlob = await fileToBlob(files.front[0].path);
@@ -111,7 +152,72 @@ const processImages = async (files) => {
       ]);
 
       console.log('Image processing successful');
-      return result.data;
+      console.log('Result data type:', typeof result.data);
+      
+      // Convert result to string for preview
+      const preview = typeof result.data === 'object' 
+        ? JSON.stringify(result.data).substring(0, 200) 
+        : String(result.data).substring(0, 200);
+      console.log('Result data preview:', preview);
+
+      // Check if result data is valid
+      if (!result || !result.data) {
+        throw new Error("Invalid result data received from Gradio");
+      }
+
+      // Handle array result (which contains URL to generated image)
+      if (Array.isArray(result.data) && result.data.length > 0) {
+        const firstItem = result.data[0];
+        
+        // Check if the item has a URL property
+        if (firstItem && firstItem.url) {
+          console.log(`Found result image URL: ${firstItem.url}`);
+          
+          // Download the image from the URL
+          const imageBuffer = await downloadImage(firstItem.url);
+          console.log(`Successfully downloaded image, size: ${imageBuffer.length} bytes`);
+          
+          return imageBuffer.toString('base64');
+        }
+      }
+      
+      // Handle other data types
+      if (Buffer.isBuffer(result.data)) {
+        return result.data.toString('base64');
+      } else if (typeof result.data === 'string') {
+        // If it's already a string, return it directly if it looks like base64
+        if (result.data.match(/^[A-Za-z0-9+/=]+$/)) {
+          return result.data;
+        }
+        // Otherwise, it might be a URL
+        try {
+          const imageBuffer = await downloadImage(result.data);
+          return imageBuffer.toString('base64');
+        } catch (err) {
+          console.error("Failed to download from string URL:", err);
+          throw new Error("Invalid image URL in response");
+        }
+      } else if (result.data instanceof Blob) {
+        // If it's a Blob, convert to base64
+        const arrayBuffer = await result.data.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        return buffer.toString('base64');
+      } else if (typeof result.data === 'object') {
+        // If it's an object that contains image data
+        if (result.data.image && Buffer.isBuffer(result.data.image)) {
+          return result.data.image.toString('base64');
+        } else if (result.data.data && Buffer.isBuffer(result.data.data)) {
+          return result.data.data.toString('base64');
+        } else if (result.data.url) {
+          // If object has a URL property
+          const imageBuffer = await downloadImage(result.data.url);
+          return imageBuffer.toString('base64');
+        }
+      }
+      
+      // If we reach here, we couldn't handle the result format
+      console.log("Unexpected data type:", typeof result.data);
+      throw new Error("Unexpected result data format");
       
     } catch (error) {
       retries++;
@@ -127,20 +233,6 @@ const processImages = async (files) => {
   }
 };
 
-// Clean up uploaded files
-const cleanupFiles = (files) => {
-  Object.values(files).forEach(fileArray => {
-    fileArray.forEach(file => {
-      try {
-        fs.unlinkSync(file.path);
-        console.error(`Error cleaning up file ${file.path}:`, error);
-      } catch (error) {
-        console.log(`Cleaned up file: ${file.path}`);
-      }
-    });
-  });
-};
-
 // API endpoint to handle image uploads
 app.post("/api/tryon", upload.fields([
   { name: "front", maxCount: 1 },
@@ -149,10 +241,7 @@ app.post("/api/tryon", upload.fields([
   try {
     console.log("Received file upload request from frontend");
 
-    // Add CORS headers for specific endpoint
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Credentials', true);
-
+    // Check if files are uploaded
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({ 
         error: "No files were uploaded.",
@@ -185,17 +274,45 @@ app.post("/api/tryon", upload.fields([
       garment: garment[0].originalname
     });
 
+    // Process images using Gradio
     const result = await processImages(req.files);
-    cleanupFiles(req.files);
+    
+    // Verify base64 string
+    if (!result || typeof result !== 'string') {
+      throw new Error("Invalid image data received from model");
+    }
+    
+    // Save the generated image with a more reliable filename
+    const outputFilename = `generated-${Date.now()}.png`;
+    const outputImagePath = path.join(__dirname, 'uploads', outputFilename);
+    fs.writeFileSync(outputImagePath, Buffer.from(result, 'base64'));
+    console.log(`Generated image saved to: ${outputImagePath}`);
 
+    // Verify the file exists and can be read
+    try {
+      const fileExists = fs.existsSync(outputImagePath);
+      console.log(`File exists check: ${fileExists}`);
+
+      const stats = fs.statSync(outputImagePath);
+      console.log(`File permissions: ${stats.mode}`);
+      console.log(`File size: ${stats.size} bytes`);
+
+      const testBuffer = fs.readFileSync(outputImagePath);
+      console.log(`File can be read, size: ${testBuffer.length} bytes`);
+    } catch (err) {
+      console.error("File verification error:", err);
+    }
+
+    // Serve the generated image with the correct URL path
     res.json({
       success: true,
-      data: result
+      imageUrl: `http://localhost:5000/uploads/${outputFilename}`,
+      imageData: `data:image/png;base64,${result}` 
     });
 
   } catch (error) {
     console.error("Error processing request:", error);
-    
+
     if (req.files) {
       cleanupFiles(req.files);
     }
@@ -234,7 +351,6 @@ app.listen(PORT, () => {
 // Error handling
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // Log the error but don't exit in production
   if (process.env.NODE_ENV === 'production') {
     console.error('Production mode - continuing despite error');
   } else {
@@ -244,7 +360,6 @@ process.on('uncaughtException', (error) => {
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Log the error but don't exit in production
   if (process.env.NODE_ENV === 'production') {
     console.error('Production mode - continuing despite rejection');
   } else {
