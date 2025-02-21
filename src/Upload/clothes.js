@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./body.css";
+import "./clothes.css";
 
 const Clothes = () => {
   const [uploadedImages, setUploadedImages] = useState([null]);
@@ -9,6 +9,7 @@ const Clothes = () => {
   const [savedImages, setSavedImages] = useState([]);
   const [isAvatarGenerated, setIsAvatarGenerated] = useState(false);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChanges = (event, index) => {
     const file = event.target.files[0];
@@ -39,6 +40,14 @@ const Clothes = () => {
     setUploadedImages(newUploadedImages);
   };
 
+  const handleNextStep = () => {
+    if (uploadedImages[largeBoxIndex] === null) {
+      setErrorMessage("Please upload an image.");
+      return;
+    }
+    handleGenerateAvatar();
+  };
+
   const handleSave = () => {
     if (uploadedImages[largeBoxIndex]) {
       setSavedImages([...savedImages, uploadedImages[largeBoxIndex]]);
@@ -46,7 +55,11 @@ const Clothes = () => {
   };
 
   const handleSavedImageClick = (index) => {
-    setLargeBoxIndex(index);
+    const selectedSavedImage = savedImages[index];
+    const updatedImages = [...uploadedImages];
+    updatedImages[0] = selectedSavedImage;
+    setUploadedImages(updatedImages);
+    setLargeBoxIndex(0);
   };
 
   const handleGenerateAvatar = () => {
@@ -60,8 +73,12 @@ const Clothes = () => {
 
   return (
     <div className="frosted-container">
+      <button className="back-button" onClick={() => navigate("/body")}>
+        <svg className="back-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
+        </svg>
+      </button>  
       <h2 className="upload-title">Upload Clothing item</h2>
-
       {errorMessage && (
         <div className="error-message" style={{ color: "red" }}>
           {errorMessage}
@@ -85,7 +102,9 @@ const Clothes = () => {
                       e.stopPropagation(); 
                       handleDelete(index); 
                     }}>
-                      🗑️ 
+                       <svg className="delete-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                            <path d="M8 26c0 1.656 1.343 3 3 3h10c1.656 0 3-1.344 3-3l2-16h-20l2 16zM19 13h2v13h-2v-13zM15 13h2v13h-2v-13zM11 13h2v13h-2v-13zM25.5 6h-6.5c0 0-0.448-2-1-2h-4c-0.553 0-1 2-1 2h-6.5c-0.829 0-1.5 0.671-1.5 1.5s0 1.5 0 1.5h22c0 0 0-0.671 0-1.5s-0.672-1.5-1.5-1.5z" />
+                        </svg>
                     </button>
                   </div>
                 </>
@@ -105,10 +124,9 @@ const Clothes = () => {
 
         {/* Instructions Section */}
         <div className="instructions-container">
-          <h2>How It Works</h2>
-          <p>Please upload an image of a clothing item to try on.</p>
+          <p>3. Please upload an image of a clothing item to try on.</p>
           <div className="button-container">
-            <button className="next-step-btn" onClick={handleGenerateAvatar}>Try On</button>
+            <button className="next-step-btn" onClick={handleNextStep}>Try On</button>
             {uploadedImages[largeBoxIndex] && (
               <button className="save-btn" onClick={handleSave}>Save</button>
             )}
