@@ -33,7 +33,7 @@ To run this project locally:
 ## Contributors
 - 🙋‍♂️ **Dewmith Magamage**  
 - 🙋‍♀️ **Chethmi Disanayaka**  
-- 🙋‍♀️ **Kavinthi Mendis**  
+- 🙋‍♀️ **Kavinthie Mendis**  
 - 🙋‍♀️ **Adithi Toradeniya** 
 - 🙋‍♀️ **Dinithi Perera** 
 - 🙋‍♂️ **Nithula Hansaja** 
