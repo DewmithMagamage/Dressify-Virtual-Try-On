@@ -19,8 +19,8 @@ body {
 
 /* Main container */
 .profile-container {
-  background: none;
-  border: none;
+  background: rgba(0, 0, 0, 0.7); 
+  border-radius: 15px;
   outline: none;
   display: flex;
   justify-content: center;
@@ -35,7 +35,7 @@ body {
 }
 
 .profile-container h1 {
-  color: black;
+  color: rgb(255, 255, 255);
   margin-bottom: 20px;
 }
 
@@ -93,9 +93,20 @@ body {
 }
 
 .notifications-icon {
-  fill: rgb(238, 66, 132);
+  fill: rgba(247, 131, 176, 0.801);
 }
 
 .notifications-icon:hover {
-  fill:rgb(187, 19, 117);
+  fill:rgb(238, 66, 132);
 }
+
+/*.save-btn {
+  background-color: rgb(84, 175, 84);
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: rgb(44, 126, 44);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}*/

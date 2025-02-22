@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import './profile.css';
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
+
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
       alert("Account deleted successfully.");
@@ -14,6 +17,11 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-container">
+      <button className="back-button" onClick={() => navigate("/")}>
+        <svg className="back-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
+        </svg>
+      </button> 
       <h1>Profile</h1>
       <button className="notifications-btn" onClick={handleNotifications}>
         <svg className="notifications-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -43,3 +51,83 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+/*const [measurements, setMeasurements] = useState({
+  waist: "",
+  torso: "",
+  bust: "",
+  shoulder: "",
+  arm: "",
+  leg: "",
+  hip: "",
+  height: ""
+});
+
+const handleMeasurementChange = (e) => {
+    const { name, value } = e.target;
+    setMeasurements({ ...measurements, [name]: value });
+  };
+  
+  <div className="measurements-container">
+          <h3>2. Enter your measurements</h3>
+          <div className="column">
+            <input
+              type="text"
+              name="waist"
+              placeholder="Waist Size in cm"
+              value={measurements.waist}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="torso"
+              placeholder="Torso Length in cm"
+              value={measurements.torso}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="bust"
+              placeholder="Bust size in cm"
+              value={measurements.bust}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="shoulder"
+              placeholder="Shoulder Width in cm"
+              value={measurements.shoulder}
+              onChange={handleMeasurementChange}
+            />
+          </div>
+          <div className="column">
+            <input
+              type="text"
+              name="arm"
+              placeholder="Arm Length in cm"
+              value={measurements.arm}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="leg"
+              placeholder="Leg Length in cm"
+              value={measurements.leg}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="hip"
+              placeholder="Hip Size in cm"
+              value={measurements.hip}
+              onChange={handleMeasurementChange}
+            />
+            <input
+              type="text"
+              name="height"
+              placeholder="Height in cm"
+              value={measurements.height}
+              onChange={handleMeasurementChange}
+            />
+          </div>
+        </div>*/

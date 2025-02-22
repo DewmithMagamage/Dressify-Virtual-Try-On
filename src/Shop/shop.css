@@ -1,18 +1,22 @@
 .container {
   width: 90vw;
-  max-width: 1600px;
+  background: rgba(0, 0, 0, 0.7); 
+  border-radius: 15px;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow: hidden;
   position: relative;
 }
 
 .container h2 {
-  color: rgb(2, 2, 2);
-  margin-top: 40px;
+  color: rgb(255, 255, 255);
+  padding: 30px;
 }
 
 /* Cart button moved to the corner */
 #cart-container {
     position: absolute;
-    top: 0px;
+    top: 10px;
     right: 20px;
     z-index: 10;
     display: flex;
@@ -27,8 +31,8 @@
     gap: 20px;
     justify-content: center;
     align-items: flex-start;
-    padding-bottom: 70px;
-    margin-top: 20px;
+    padding-bottom: 100px;
+    margin-top: 10px;
     min-height: 80vh;
     max-height: 80vh;
     overflow-y: auto;
@@ -36,7 +40,7 @@
   }
   
   .product {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(125, 134, 138, 0.534);
     border-radius: 10px;
     text-align: center;
     width: 28%;
@@ -57,10 +61,11 @@
   .product h3 {
     font-size: 16px;
     margin: 10px 0;
+    color: black;
   }
   
   .product p {
-    color: white;
+    color: black;
     font-size: 14px;
     margin: 10px 0;
   }
@@ -133,11 +138,11 @@
     height: 30px; 
     margin-right: 10px;
     transition: transform 0.2s ease;
-    fill: rgb(238, 66, 132); 
+    fill: white;
   }
   
   .cart-length {
-    color: rgb(238, 66, 132);
+    color: white;
     font-size: 18px; 
     font-weight: bold;
     transition: transform 0.2s ease, font-weight 0.3s ease;
@@ -145,8 +150,8 @@
   
   #view-cart:hover .cart, #view-cart:hover .cart-length {
     transform: scale(1.1);
-    fill: rgb(187, 19, 117);
-    color: rgb(187, 19, 117);
+    fill: rgb(238, 66, 132); 
+    color: rgb(238, 66, 132); 
   }
 
 .popup {

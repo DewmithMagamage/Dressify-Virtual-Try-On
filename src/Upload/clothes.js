@@ -6,7 +6,6 @@ const Clothes = () => {
   const [uploadedImages, setUploadedImages] = useState([null]);
   const [errorMessage, setErrorMessage] = useState("");
   const [largeBoxIndex, setLargeBoxIndex] = useState(0);
-  const [savedImages, setSavedImages] = useState([]);
   const [isAvatarGenerated, setIsAvatarGenerated] = useState(false);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
   const navigate = useNavigate();
@@ -48,20 +47,6 @@ const Clothes = () => {
     handleGenerateAvatar();
   };
 
-  const handleSave = () => {
-    if (uploadedImages[largeBoxIndex]) {
-      setSavedImages([...savedImages, uploadedImages[largeBoxIndex]]);
-    }
-  };
-
-  const handleSavedImageClick = (index) => {
-    const selectedSavedImage = savedImages[index];
-    const updatedImages = [...uploadedImages];
-    updatedImages[0] = selectedSavedImage;
-    setUploadedImages(updatedImages);
-    setLargeBoxIndex(0);
-  };
-
   const handleGenerateAvatar = () => {
     setIsGeneratingAvatar(true);
     setIsAvatarGenerated(true);
@@ -79,11 +64,7 @@ const Clothes = () => {
         </svg>
       </button>  
       <h2 className="upload-title">Upload Clothing item</h2>
-      {errorMessage && (
-        <div className="error-message" style={{ color: "red" }}>
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       {/* Upload Section */}
       <div className="upload-section">
@@ -109,7 +90,7 @@ const Clothes = () => {
                   </div>
                 </>
               ) : (
-                <span>Click to upload an image</span>
+                <span>+ Click to upload or drag and drop an image</span>
               )}
               <input
                 id={`fileInput${index}`}
@@ -124,34 +105,20 @@ const Clothes = () => {
 
         {/* Instructions Section */}
         <div className="instructions-container">
-          <p>3. Please upload an image of a clothing item to try on.</p>
+          <p>Choose the outfit you'd like to try on and upload it here for a perfect preview</p>
           <div className="button-container">
             <button className="next-step-btn" onClick={handleNextStep}>Try On</button>
-            {uploadedImages[largeBoxIndex] && (
-              <button className="save-btn" onClick={handleSave}>Save</button>
-            )}
           </div>  
-        </div>
+        </div>        
+      </div>
 
-        {/* Saved Image Section - Vertically Displayed */}
-        {savedImages.length > 0 && (
-          <div className="saved-image-container">
-            {savedImages.map((image, index) => (
-              <div key={index} className="saved-image" onClick={() => handleSavedImageClick(index)}>
-                <img src={image} alt={`Saved ${index}`} />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {isGeneratingAvatar && (
+      {isGeneratingAvatar && (
           <div className="avatar-overlay">
             <div className="avatar-message">
               <p>Please wait a few moments to generate an avatar!</p>
             </div>  
           </div>  
         )}
-      </div>
     </div>
   );
 };

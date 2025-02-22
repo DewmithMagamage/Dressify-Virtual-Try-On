@@ -18,10 +18,10 @@ body {
 }
 
 .frosted-container {
-  backdrop-filter: blur(10px) brightness(90%);
-  background: rgba(29, 13, 29, 0.658);
+  background:rgba(0, 0, 0, 0.7); 
+  position: relative;
   border-radius: 20px;
-  padding: 10px ;
+  padding: 20px ;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,7 +33,7 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.upload-section{
+.upload-section {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -114,17 +114,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  text-align: center;
   top: 10%;
   transform: translateY(-10px);
-}
-
-.instructions-container h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  color: white;
-  margin-bottom: 5px;
 }
 
 .instructions-container p {
@@ -171,7 +164,7 @@ body {
 }
 
 .hover-overlay .delete-btn {
-  background: rgba(73, 68, 68, 0.856);
+  background: rgba(0, 0, 0, 0.7); 
   border: none;
   padding: 10px;
   cursor: pointer;
@@ -190,70 +183,10 @@ body {
   transition: transform 0.2s ease;
 }
 
-.save-btn {
-  display: inline-block;
-  margin-left: 15px;
-  padding: 10px 25px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  background-color: rgb(84, 175, 84);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.save-btn:hover {
-  background-color:rgb(44, 126, 44); 
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.saved-image-container {
-  position: absolute;
-  color: white;
-  top: 57%;
-  left: 50%;
-  transform: translateY(-50%, -50%);
-  text-align: center;
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 90%;
-  max-width: 100%;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.saved-image {
-  width: 100px;
-  height: 120px;
-  border-radius: 15px;
-  object-fit: cover;
-  border: 4px solid #757171;
-  overflow: hidden;
-}
-
-.saved-image:hover {
-  border-color:rgb(238, 66, 132);
-}
-
-.saved-images {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 10px;
-}
-
-.saved-image img{
-  width: 100%;
-  height: 100%;
-}
-
 .back-button {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 20px;
+  left: 20px;
   background: none;
   border: none;
   cursor: pointer;

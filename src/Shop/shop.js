@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import './shop.css';
 
 const Shop = () => {
   const [cart, setCart] = useState([]);
   const [cartVisible, setCartVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const showMessage = (msg) => {
     setMessage(msg);
@@ -42,6 +44,11 @@ const Shop = () => {
  
   return (
     <div className="container">
+      <button className="back-button" onClick={() => navigate("/")}>
+        <svg className="back-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
+        </svg>
+      </button> 
       <h2>Shop</h2>
       <div id="cart-container">
         <button id="view-cart" onClick={() => setCartVisible(true)}>
