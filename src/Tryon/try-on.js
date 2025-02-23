@@ -1,132 +1,104 @@
-import { useState } from "react";
-import "./try-on.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useLocation } from 'react-router-dom';
+import './try-on.css';
 
 const TryOn = () => {
-  const [uploadedImages, setUploadedImages] = useState([null, null, null, null]);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [largeBoxIndex, setLargeBoxIndex] = useState(0);
-  const [isAvatarGenerated, setIsAvatarGenerated] = useState(false);
-  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const location = useLocation();
+  const { frontImage, garmentImage } = location.state || {};
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleFileChanges = (event, index) => {
-    const file = event.target.files[0];
-    setErrorMessage(""); 
+  useEffect(() => {
+    if (frontImage && garmentImage) {
+      handleTryOn();
+    }
+  }, [frontImage, garmentImage]);
 
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        setErrorMessage("Please select a valid image file."); // Fixed state name here
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newUploadedImages = [...uploadedImages];
-        newUploadedImages[index] = e.target.result;
-        setUploadedImages(newUploadedImages);
+  const handleTryOn = async () => {
+    setLoading(true);
+    setError('');
+    setGeneratedImage(null);
 
-        if (index < 3) {
-          setLargeBoxIndex(index + 1);
+    const formData = new FormData();
+    formData.append('front', dataURLtoFile(frontImage, 'front.png'));
+    formData.append('garment', dataURLtoFile(garmentImage, 'garment.png'));
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/tryon', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (response.data.success) {
+        if (response.data.imageData) {
+          // Check if imageData already includes the prefix
+          const base64Image = response.data.imageData.startsWith('data:image/png;base64,')
+            ? response.data.imageData // Use as-is
+            : `data:image/png;base64,${response.data.imageData}`; // Add prefix
+          setGeneratedImage(base64Image);
+        } else if (response.data.imageUrl) {
+          setGeneratedImage(response.data.imageUrl);
+        } else {
+          setError('No valid image data received from the server.');
         }
-      };
-      reader.readAsDataURL(event.target.files[0]);
+      } else {
+        setError(response.data.error || 'Error processing image.');
+      }
+    } catch (err) {
+      console.error("API error:", err);
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(`Server error: ${err.response.data.error}`);
+      } else {
+        setError('Failed to connect to the server.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const triggerFileInput = (index) => {
-    document.getElementById(`fileInput${index}`).click();
-  }
-
-  const handleNextStep = () => {
-    if (uploadedImages[largeBoxIndex] === null) {
-      setErrorMessage("Please upload an image"); 
-      return;
+  const dataURLtoFile = (dataUrl, filename) => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
     }
-    setErrorMessage(""); 
-    setLargeBoxIndex((prevIndex) => (prevIndex < 3 ? prevIndex + 1 : prevIndex)); 
+    return new File([u8arr], filename, { type: mime });
   };
-
-  const handleGenerateAvatar = () => {
-    setIsGeneratingAvatar(true);
-    setIsAvatarGenerated(true);
-    setTimeout(() => {
-      setIsGeneratingAvatar(false);
-      setLargeBoxIndex(0);
-    }, 3000);
-  };
-
-  const getInstructionsText = (index) => {
-    switch (index) {
-      case 0:
-        return "Upload a clear picture facing the front";
-      case 1:
-        return "Upload a clear picture facing the right-side";  
-      case 2:
-        return "Upload a clear picture facing the left-side";  
-      case 3:
-        return "Upload a clear picture facing the back";  
-      default:
-        return "";  
-    }
-  }
 
   return (
     <div className="frosted-container">
-      <h2 className="upload-title">Upload Images</h2>
-    
-      {/* Upload Section */}
-      <div class="upload-section">
-        <div className="upload-container">
-          {uploadedImages.map((image, index) => (
-            <div
-              key={index}
-              className={`upload-box ${largeBoxIndex === index ? "large" : "small"}`}
-              onClick={() => {
-                if (largeBoxIndex == index){
-                  triggerFileInput(index);
-                } else {
-                  setLargeBoxIndex(index);
-                }
+      <h2 className="upload-title">Virtual Try-On</h2>
+
+      <div className="upload-section">
+        {loading && (
+          <div className="loading-indicator">
+            <p>Processing your images, this may take up to 30 seconds...</p>
+          </div>
+        )}
+
+        {error && <p className="error-message">{error}</p>}
+
+        {generatedImage && (
+          <div className="result-container">
+            <h3>Generated Try-On Result:</h3>
+            <img
+              src={generatedImage}
+              alt="Generated Try-On"
+              crossOrigin="anonymous"
+              className="result-image"
+              onLoad={() => console.log("Result image loaded successfully:", generatedImage)}
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+                setError("Failed to load the generated image. Please try again.");
               }}
-            >
-              {image ? (
-                <img src={image} alt="Uploaded" />
-            ) : (
-              <>
-                 {largeBoxIndex === index && !image && (
-                  <span className="error-message" style={{ color: errorMessage && errorMessage === "Please upload an image" ? 'red' : 'black' }}>
-                    {errorMessage && errorMessage === "Please upload an image" ? errorMessage : "Click to upload an image"}
-                  </span>
-                )}
-              </>
-            )}
-            <input
-              id={`fileInput${index}`}
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChanges(e, index)}
-              style={{ display: "none" }}
             />
           </div>
-          ))}  
-        </div>
-
-        {/* Instructions Section */}
-        <div className="instructions-container"> 
-          <h2>How It Works</h2>
-          <p>{getInstructionsText(largeBoxIndex)}</p>
-          <button className="next-step-btn" 
-            onClick={uploadedImages.every((img) => img !== null) ? handleGenerateAvatar : handleNextStep}>  
-            {isAvatarGenerated ? "Avatar Generated!" : "Next Step"}
-          </button>
-        </div>
-
-        {isGeneratingAvatar && (
-          <div className="avatar-overlay">
-            <div className="avatar-message">
-              <p>Please wait a few moments to generate an avatar!</p>
-            </div>  
-          </div>  
         )}
-      </div>  
+      </div>
     </div>
   );
 };

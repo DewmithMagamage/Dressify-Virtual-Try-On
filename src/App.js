@@ -5,6 +5,7 @@ import Home from './Home/home';
 import Profile from './Profile/profile';
 import Shop from './Shop/shop';
 import Cart from './Shop/cart';
+import TryOn from './Tryon/try-on';
 import Body from "./Upload/body";
 import Clothes from "./Upload/clothes";
 import Navbar from './Components/navbar';
@@ -21,6 +22,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/body" element={<Body />} />
           <Route path="/clothes" element={<Clothes />} />
+          <Route path="/try-on" element={<TryOn />} /> 
         </Routes>
       </div>
     </Router>
