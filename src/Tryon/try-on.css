@@ -1,230 +1,112 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Body Styling */
-  body {
-    font-family: 'Arial', sans-serif;
-    background: url('../IMAGES/background.png') no-repeat center center fixed;
-    background-size: cover;
-    color: #333;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  /* Frosted Glass Effect */
+/* General styling to match body.css */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Try-on container */
+.frosted-container {
+  background: rgba(0, 0, 0, 0.7); 
+  position: relative;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1200px;
+  min-height: 80vh;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Upload section with image */
+.upload-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Result container */
+.result-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  position: relative;
+}
+
+/* Result image */
+.result-image {
+  width: auto;
+  height: auto;
+  max-height: 80vh;
+  max-width: 50%;
+  object-fit: contain;
+  border: 4px solid #757171;
+  border-radius: 15px;
+  transition: all 0.3s;
+}
+
+.result-image:hover {
+  border-color: rgb(187, 19, 117);
+}
+
+/* Checkout text */
+.checkout-text {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffffff;
+  flex: 1;
+  margin-top: 20px;
+  transition: all 0.3s;
+}
+
+/* Loading indicator */
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-weight: bold;
+}
+
+/* Error message */
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 968px) {
   .frosted-container {
-    backdrop-filter: blur(10px) brightness(90%);
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 20px;
-    padding: 10px ;
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 1200px;
-    height: auto;
-    min-height: 70vh;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Navigation Panel Styles */
-.nav-panel {
-    position: fixed;
-    left: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: linear-gradient(145deg, #f0f0f0, #cccccc);
-    border-radius: 50px;
-    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2), -4px -4px 6px rgba(255, 255, 255, 0.2);
-    padding: 10px 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-  }
-  
-  .nav-icon {
-    display: block;
-    width: 40px;
-    height: 40px;
-    background: #f0f0f0;
-    border-radius: 50%;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2), -2px -2px 5px rgba(255, 255, 255, 0.8);
-    transition: all 0.3s ease;
-  }
-  
-  .nav-icon img {
-    width: 60%;
-    height: 60%;
-    display: block;
-    margin: 7.5px;
-    padding: 3px;
-  }
-  
-  .nav-icon:hover {
-    background: #ffd700; /* Highlight color on hover */
-    transform: scale(1.1);
-    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2), -4px -4px 6px rgba(255, 255, 255, 0.8);
-  }
-  
-  .upload-section{
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
+    width: 95%;
     padding: 20px;
   }
 
-  .upload-container {
-    width: 65%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    gap: 15px;
-  }
-  
-  .upload-title {
-    font-size: 1.8rem;
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-  }
-  
-  .upload-box {
-    border: 4px solid #757171;
-    width: 120px;
-    height: 140px;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
+  .result-container {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.3s;
+    gap: 20px;
   }
 
-  .upload-box.large {
-    border: 4px dashed #757171;
-    width: 250px;
-    height: 320px;
-    position: relative;
-    transition: all 0.3s;
-  }
-  
-  .upload-box:hover {
-    border-color:rgb(238, 66, 132);
-  }
-  
-  .upload-box img {
-    max-width: 95%;
-    max-height: 95%;
-  }
-  
-  .upload-box span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-size: 1rem;
-    color: #666;
-    font-weight: bold;
-  }
-  
-  .upload-instruction {
-    font-size: 0.9rem;
-    color: #888;
-    margin-top: 10px;
-  }
-  
-  .instructions-container {
-    width: 35%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  
-  .instructions-container h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-  }
-  
-  .instructions-container p {
-    font-size: 1.2rem;
-    color: white;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-  
-  .next-step-btn {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background-color: rgb(248, 129, 199);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .next-step-btn:hover {
-    background-color:rgb(238, 66, 132);
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  .result-image {
+    max-width: 100%;
   }
 
-  .avatar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(139, 133, 133, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(5px);
-  }
-
-  .avatar-message{
-    border-radius: 10px;
+  .checkout-text {
     text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: black;
-    max-width: 80%;
+    font-size: 24px;
+    margin-top: 0;
   }
-
-  .avatar-overlay, .avatar-message {
-    animation: fadeIn 0.5s ease-out, fadeOut 0.5s ease-in 2.5s;
-  }
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
+}

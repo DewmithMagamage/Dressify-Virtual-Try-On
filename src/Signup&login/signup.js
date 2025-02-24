@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./login.css";
 
 const Signup = () => {
@@ -11,6 +13,8 @@ const Signup = () => {
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [language, setLanguage] = useState('en');
+  const navigate = useNavigate();
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -24,34 +28,40 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+    navigate("/login");
   };
 
   return (
     <div className="container">
-      <div className="form-container">
+      <div className="login-box">
         <h2>Create Account</h2>
-        <div className="social-login">
-          <button className="social-btn google">
-            <img src="/IMAGES/google.png" alt="Google" /> Sign up with Google
-          </button>
-          <button className="social-btn facebook">
-            <img src="/IMAGES/facebook.png" alt="Facebook" /> Sign up with Facebook
-          </button>
+        <div className="language-dropdown">
+          <select value={language} onChange={handleLanguageChange}>
+            <option value="en">English</option>
+            <option value="si">Sinhala</option>
+            <option value="ta">Tamil</option>
+          </select>
         </div>
-        <div className="divider">- OR -</div>
+
         <form onSubmit={handleSubmit}>
+          <div className="social-login">
+          <button className="google-btn">
+            <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
+          </button>
+          <button className="facebook-btn">
+            <img src="/IMAGES/facebook.png" alt="Facebook" className="social-icon" />Log in with Facebook
+          </button>
+          </div>
+          <p className="or-divider">- OR -</p>
+
           <div className="input-field">
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Full Name"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" placeholder="Full Name" required />
           </div>
           <div className="input-field">
             <input
@@ -63,35 +73,28 @@ const Signup = () => {
               required
             />
           </div>
-          <div className="input-field password-field">
+          <div className="input-field">
             <input
               type={passwordVisible ? "text" : "password"}
-              name="password"
               placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
               required
             />
-            <span className="toggle-password" onClick={togglePassword}>
-              👁️
-            </span>
+            <span className="toggle-password" onClick={togglePassword}></span>
           </div>
-          <div className="input-field password-field">
+          <div className="input-field">
             <input
-              type={confirmPasswordVisible ? "text" : "password"}
-              name="confirmPassword"
+              type={passwordVisible ? "text" : "password"}
               placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
               required
             />
-            <span className="toggle-password" onClick={toggleConfirmPassword}>
-              👁️
-            </span>
+            <span className="toggle-password" onClick={togglePassword}></span>
           </div>
-          <button type="submit" className="submit-btn">Create Account</button>
+            
+          <button type="submit" className="login-btn">Create Account</button>
         </form>
-        <p className="login-link">Already have an account? <a href="#">Log in</a></p>
+        <p className="link">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
       </div>
     </div>
   );

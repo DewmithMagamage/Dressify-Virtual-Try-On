@@ -10,11 +10,6 @@
     background: url('../IMAGES/background.png') no-repeat center center fixed;
     background-size: cover;
     color: #333;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
   }
   
   /* Frosted Glass Effect */
@@ -29,7 +24,7 @@
     justify-content: center;
     width: 90%;
     max-width: 1200px;
-    min-height: 70vh;
+    min-height: 80vh;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 
@@ -42,6 +37,7 @@
   
   .upload-section {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
@@ -51,10 +47,11 @@
   }
   
   .upload-container {
-    width: 50%;
+    width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     text-align: center;
     gap: 10px;
   }
@@ -111,8 +108,8 @@
   }
   
   .instructions-container {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -120,11 +117,24 @@
     transform: translateY(-10px);
   }
 
-  .instructions-container p {
+  .instructions-container .body-text{
+    width: 450px;
     font-size: 1.2rem;
     color: white;
+    padding: 15px;
     margin-bottom: 20px;
-  }
+  }  
+
+  .instructions-container .clothes-text{
+    width: 100%;
+    max-width: 450px;
+    font-size: 1.2rem;
+    color: white;
+    padding: 9px;
+    margin-bottom: 10px;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }  
   
   .button-container {
     display: flex;
@@ -167,19 +177,26 @@
   }
   
   .delete-btn {
-    background: none;
+    background: rgba(77, 71, 71, 0.863);
     border: none;
-    padding: 0;
+    border-radius: 10px;
+    padding: 10px;
     cursor: pointer;
   }
   
   .delete-icon {
     width: 20px;
     height: 20px;
+    fill: black;
     transition: transform 0.2s ease;
   }
   
+.delete-btn:hover {
+    background: black;
+  }
+
   .delete-btn:hover .delete-icon {
+    fill: white;
     transform: scale(1.1);
   }
   .back-button {

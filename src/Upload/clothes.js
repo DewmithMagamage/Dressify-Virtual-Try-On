@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./body.css";
 
@@ -65,7 +65,7 @@ const Clothes = () => {
                       newUploadedImages[index] = null;
                       setUploadedImages(newUploadedImages);
                     }}>
-                      <svg className="delete-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                      <svg className="delete-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
                         <path d="M8 26c0 1.656 1.343 3 3 3h10c1.656 0 3-1.344 3-3l2-16h-20l2 16zM19 13h2v13h-2v-13zM15 13h2v13h-2v-13zM11 13h2v13h-2v-13zM25.5 6h-6.5c0 0-0.448-2-1-2h-4c-0.553 0-1 2-1 2h-6.5c-0.829 0-1.5 0.671-1.5 1.5s0 1.5 0 1.5h22c0 0 0-0.671 0-1.5s-0.672-1.5-1.5-1.5z" />
                       </svg>
                     </button>
@@ -86,7 +86,7 @@ const Clothes = () => {
         </div>
 
         <div className="instructions-container">
-          <p>Choose the outfit you'd like to try on and upload it here for a perfect preview</p>
+          <p className="clothes-text">Choose the outfit you'd like to try on and upload it here for a perfect preview</p>
           <div className="button-container">
             <button className="next-step-btn" onClick={handleNextStep}>Try On</button>
           </div>

@@ -32,10 +32,9 @@ const TryOn = () => {
 
       if (response.data.success) {
         if (response.data.imageData) {
-          // Check if imageData already includes the prefix
           const base64Image = response.data.imageData.startsWith('data:image/png;base64,')
-            ? response.data.imageData // Use as-is
-            : `data:image/png;base64,${response.data.imageData}`; // Add prefix
+            ? response.data.imageData
+            : `data:image/png;base64,${response.data.imageData}`;
           setGeneratedImage(base64Image);
         } else if (response.data.imageUrl) {
           setGeneratedImage(response.data.imageUrl);
@@ -71,8 +70,6 @@ const TryOn = () => {
 
   return (
     <div className="frosted-container">
-      <h2 className="upload-title">Virtual Try-On</h2>
-
       <div className="upload-section">
         {loading && (
           <div className="loading-indicator">
@@ -84,10 +81,9 @@ const TryOn = () => {
 
         {generatedImage && (
           <div className="result-container">
-            <h3>Generated Try-On Result:</h3>
             <img
               src={generatedImage}
-              alt="Generated Try-On"
+              alt="Try-On Result"
               crossOrigin="anonymous"
               className="result-image"
               onLoad={() => console.log("Result image loaded successfully:", generatedImage)}
@@ -96,6 +92,9 @@ const TryOn = () => {
                 setError("Failed to load the generated image. Please try again.");
               }}
             />
+            <div className="checkout-text">
+              Checkout the fit
+            </div>
           </div>
         )}
       </div>

@@ -1,48 +1,90 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./login.css";
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [language, setLanguage] = useState('en');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+  });
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic
-    console.log("Form submitted");
+    navigate("/home");
   };
 
   return (
     <div className="container">
       <div className="login-box">
         <h2>Log In</h2>
-        <div className="social-login">
-          <button className="google-btn">Log in with Google</button>
-          <button className="facebook-btn">Log in with Facebook</button>
+        <div className="language-dropdown">
+          <select value={language} onChange={handleLanguageChange}>
+            <option value="en">English</option>
+            <option value="si">Sinhala</option>
+            <option value="ta">Tamil</option>
+          </select>
         </div>
-        <p className="or-divider">- OR -</p>
+
         <form onSubmit={handleSubmit}>
+          <div className="social-login">
+          <button className="google-btn">
+            <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
+          </button>
+          <button className="facebook-btn">
+            <img src="/IMAGES/facebook.png" alt="Facebook" className="social-icon" />Log in with Facebook
+          </button>
+          </div>
+          <p className="or-divider">- OR -</p>
+       
           <div className="input-field">
             <input type="text" placeholder="Full Name" required />
           </div>
-          <div className="input-field password-field">
+          <div className="input-field">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-field">
             <input
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
               required
             />
-            <span className="toggle-password" onClick={togglePassword}>
-              👁️
-            </span>
+            <span className="toggle-password" onClick={togglePassword}></span>
           </div>
-          <button type="submit" className="login-btn">
-            Log In
-          </button>
+          <div className="input-field">
+            <input
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Confirm Password"
+              required
+            />
+            <span className="toggle-password" onClick={togglePassword}></span>
+          </div>
+          
+          <button type="submit" className="login-btn">Log In</button>
         </form>
-        <p className="signup-link">
-          Don’t have an account? <a href="#">Sign up</a>
+        <p className="link">
+          Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>

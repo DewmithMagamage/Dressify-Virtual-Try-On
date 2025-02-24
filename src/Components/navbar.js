@@ -6,7 +6,11 @@ import './navbar.css';
 
 const Navbar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
+
+  if (location.pathname === "/login" || location.pathname === "/") {
+    return null;
+  }
 
   return (
     <nav className="navbar">
@@ -15,12 +19,12 @@ const Navbar = () => {
       </Link>
      
       <div className="nav-icons">
-        <NavLink to="/" exacct className={location.pathname === "/" ? "active home-btn" : "home-btn"}>
+        <NavLink to="/home" exacct className={location.pathname === "/" ? "active home-btn" : "home-btn"}>
           <svg className="home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19.0167 7.1419C19.6261 7.50161 20 8.15658 20 8.86423V18.0001C20 19.1047 19.1046 20.0001 18 20.0001H16C14.8954 20.0001 14 19.1047 14 18.0001V14C14 12.8955 13.1046 12 12 12V12C10.8954 12 10 12.8955 10 14V18.0001C10 19.1047 9.10457 20.0001 8 20.0001H6C4.89543 20.0001 4 19.1047 4 18.0001V8.86423C4 8.15658 4.37395 7.50161 4.98335 7.1419L10.9833 3.60023C11.6106 3.23 12.3894 3.23 13.0167 3.60023L19.0167 7.1419Z"></path>
           </svg>
         </NavLink>
-        <NavLink to="/body" className={location.pathname === '/body' || location.pathname === '/clothes' ? 'active tryOn-btn' : 'tryOn-btn'}>
+        <NavLink to="/body" className={location.pathname === '/body' || location.pathname === '/clothes' || location.pathname === '/try-on' ? 'active tryOn-btn' : 'tryOn-btn'}>
           <svg className="tryOn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3 7L6 4H9C9 4.39397 9.0776 4.78407 9.22836 5.14805C9.37913 5.51203 9.6001 5.84274 9.87868 6.12132C10.1573 6.3999 10.488 6.62087 10.8519 6.77164C11.2159 6.9224 11.606 7 12 7C12.394 7 12.7841 6.9224 13.1481 6.77164C13.512 6.62087 13.8427 6.3999 14.1213 6.12132C14.3999 5.84274 14.6209 5.51203 14.7716 5.14805C14.9224 4.78407 15 4.39397 15 4H18L21 7L20.5785 11.2152C20.542 11.5801 20.1382 11.7829 19.8237 11.5942L18 10.5V18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V10.5L4.17629 11.5942C3.86184 11.7829 3.45801 11.5801 3.42152 11.2152L3 7Z"></path>
           </svg>
@@ -36,6 +40,7 @@ const Navbar = () => {
             <path d="M12 6.92969C9.93 6.92969 8.25 8.60969 8.25 10.6797C8.25 12.7097 9.84 14.3597 11.95 14.4197C11.98 14.4197 12.02 14.4197 12.04 14.4197C12.06 14.4197 12.09 14.4197 12.11 14.4197C12.12 14.4197 12.13 14.4197 12.13 14.4197C14.15 14.3497 15.74 12.7097 15.75 10.6797C15.75 8.60969 14.07 6.92969 12 6.92969Z"/>
           </svg>
         </NavLink>
+        
       </div>
     </nav>
   );
