@@ -9,8 +9,8 @@ Dressify is a 🌐 **virtual try-on web application** designed to transform the 
 - 🌿 **Eco-Friendly Approach:** Helps reduce returns, supporting sustainability efforts.
 
 ## Technologies
-- 🛠️ ** Front-end - React**
-- 🛠️ ** Back-end - Node**
+- 🛠️ **Front-end - React**
+- 🛠️ **Back-end - Node**
 
 
 ## Getting Started
