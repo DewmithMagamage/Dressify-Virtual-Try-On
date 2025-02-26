@@ -1,76 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop</title>
-  <link rel="stylesheet" href="/shop/shop.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Store</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
-      <img src="logo.png" alt="Logo">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>FASHION BUG</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search entire store here">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                <a href="#" class="wishlist" id="wishlist-icon"><i class="fas fa-heart"></i></a>
+                <a href="#" class="cart" id="cart-icon"><i class="fas fa-shopping-cart"></i> <span>0</span> item(s)</a>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul class="main-menu">
+                <li><a href="#">Women</a></li>
+                <li><a href="#">Men</a></li>
+                <li><a href="#">Kids</a></li>
+                <li><a href="#">Accessories</a></li>
+                <li><a href="#">New Arrivals</a></li>
+                <li><a href="#">Sale</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Cart Popup -->
+    <div class="popup-container" id="cart-popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2>Shopping Cart</h2>
+                <button class="close-popup">&times;</button>
+            </div>
+            <div class="popup-body">
+                <div class="cart-items" id="cart-items">
+                    <p class="empty-message">Your cart is empty</p>
+                </div>
+            </div>
+            <div class="popup-footer">
+                <div class="cart-summary">
+                    <p>Total Items: <span id="cart-total-items">0</span></p>
+                    <p>Total Price: <span id="cart-total-price">Rs 0.00</span></p>
+                </div>
+                <div class="cart-actions">
+                    <button class="btn-continue">Continue Shopping</button>
+                    <button class="btn-checkout">Checkout</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <h2>Shop</h2>
-    <div id="cart-container">
-      <button id="view-cart" onclick="showCart()">🛒 View Cart (<span id="cart-count">0</span>)</button>
+
+    <!-- Wishlist Popup -->
+    <div class="popup-container" id="wishlist-popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2>My Wishlist</h2>
+                <button class="close-popup">&times;</button>
+            </div>
+            <div class="popup-body">
+                <div class="wishlist-items" id="wishlist-items">
+                    <p class="empty-message">Your wishlist is empty</p>
+                </div>
+            </div>
+            <div class="popup-footer">
+                <button class="btn-add-all-to-cart">Add All to Cart</button>
+            </div>
+        </div>
     </div>
-    <div class="product-grid">
-      <!-- Product 1 -->
-      <div class="product">
-        <img src="product1.jpg" alt="Product 1">
-        <h3>Product 1</h3>
-        <p>$10.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 1', 10)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-      <!-- Product 2 -->
-      <div class="product">
-        <img src="product2.jpg" alt="Product 2">
-        <h3>Product 2</h3>
-        <p>$15.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 2', 15)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-      <!-- Product 3 -->
-      <div class="product">
-        <img src="product3.jpg" alt="Product 3">
-        <h3>Product 3</h3>
-        <p>$20.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 3', 20)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-      <!-- Add More Products -->
-      <div class="product">
-        <img src="product4.jpg" alt="Product 4">
-        <h3>Product 4</h3>
-        <p>$12.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 4', 12)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-      <div class="product">
-        <img src="product5.jpg" alt="Product 5">
-        <h3>Product 5</h3>
-        <p>$18.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 5', 18)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-      <div class="product">
-        <img src="product6.jpg" alt="Product 6">
-        <h3>Product 6</h3>
-        <p>$25.00</p>
-        <button class="action-btn add-to-cart" onclick="addToCart('Product 6', 25)">Add to Cart</button>
-        <button class="action-btn try-on">Try On</button>
-      </div>
-    </div>
-    <div id="cart-popup" class="hidden">
-      <h3>Shopping Cart</h3>
-      <div id="cart-items"></div>
-      <p id="total-price">Total: $0.00</p>
-      <button id="close-cart" onclick="hideCart()">Close</button>
-    </div>
-  </div>
+
+    <main>
+        <div class="container">
+            <div class="section-title">
+                <h2>New Arrivals</h2>
+            </div>
+            
+            <div class="products">
+                <div class="product-card" data-id="1">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="3 quarter denim pant">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">3 quarter denim pant</h3>
+                        <p class="product-price">Rs 4,990.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="2">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Wide leg cargo denim pant">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Wide leg cargo denim pant</h3>
+                        <p class="product-price">Rs 4,590.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="3">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Wide leg cargo denim pant">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Wide leg cargo denim pant</h3>
+                        <p class="product-price">Rs 4,590.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="4">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Womens short denim jacket">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Womens short denim jacket</h3>
+                        <p class="product-price">Rs 3,990.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="5">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Floral summer dress">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Floral summer dress</h3>
+                        <p class="product-price">Rs 5,290.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="6">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Striped cotton blouse">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Striped cotton blouse</h3>
+                        <p class="product-price">Rs 2,790.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="7">
+                    <div class="product-badge">Sale</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Linen blazer">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Linen blazer</h3>
+                        <p class="product-price"><span class="original-price">Rs 6,990.00</span> Rs 5,590.00</p>
+                    </div>
+                </div>
+                
+                <div class="product-card" data-id="8">
+                    <div class="product-badge">New</div>
+                    <div class="product-image">
+                        <img src="/image (2).png" alt="Leather handbag">
+                        <div class="wishlist-button">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="product-actions">
+                            <button class="try-now">Try Now</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Leather handbag</h3>
+                        <p class="product-price">Rs 7,990.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-more">
+                <button class="view-collection">VIEW COLLECTION</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/home.js"></script>
 </body>
-<script src="/shop/shop.js"></script>
 </html>
