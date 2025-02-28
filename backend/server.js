@@ -264,12 +264,18 @@ const generate3DModel = async (imageUrl) => {
       console.log(`Processing 3D model attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
       
       // First, download the image
+      console.log(`Downloading image from: ${imageUrl}`);
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer',
         timeout: CONFIG.REQUEST_TIMEOUT
       });
       
+      if (response.status !== 200) {
+        throw new Error(`Failed to download image, status: ${response.status}`);
+      }
+      
       const imageBlob = new Blob([Buffer.from(response.data)], { type: 'image/png' });
+      console.log('Image downloaded and converted to blob successfully');
       
       // Initialize Gradio client
       const gradioApp = await Promise.race([
