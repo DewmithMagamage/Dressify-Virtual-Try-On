@@ -263,7 +263,7 @@ const generate3DModel = async (imageUrl) => {
     try {
       console.log(`Processing 3D model attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
       
-      // First, download the image
+      // Download the image
       console.log(`Downloading image from: ${imageUrl}`);
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer',
@@ -305,41 +305,34 @@ const generate3DModel = async (imageUrl) => {
         )
       ]);
 
-      if (!result || !result.data || !Array.isArray(result.data)) {
+      console.log("Full Gradio response:", result);
+
+      if (!result || !result.data) {
         throw new Error("Invalid 3D model result data received from Gradio");
       }
 
       // Extract URLs from the response
       const modelFiles = {};
       const timestamp = Date.now();
-      
-      // Expected outputs: GLB model, video, front/back/side views
-      const outputs = result.data;
-      
-      if (outputs.length >= 5) {
-        // Download model file (GLB)
-        if (outputs[0] && outputs[0].url) {
-          const modelPath = path.join(__dirname, 'uploads', `model-${timestamp}.glb`);
-          await downloadFile(outputs[0].url, modelPath);
-          modelFiles.model = `http://localhost:5000/uploads/model-${timestamp}.glb`;
-        }
-        
-        // Download video
-        if (outputs[1] && outputs[1].url) {
-          const videoPath = path.join(__dirname, 'uploads', `video-${timestamp}.mp4`);
-          await downloadFile(outputs[1].url, videoPath);
-          modelFiles.video = `http://localhost:5000/uploads/video-${timestamp}.mp4`;
-        }
-        
-        // Download front, back, and side views
-        for (let i = 2; i < 5 && i < outputs.length; i++) {
-          if (outputs[i] && outputs[i].url) {
-            const viewType = ['front', 'back', 'side'][i-2];
-            const imagePath = path.join(__dirname, 'uploads', `${viewType}-${timestamp}.png`);
-            await downloadFile(outputs[i].url, imagePath);
-            modelFiles[viewType] = `http://localhost:5000/uploads/${viewType}-${timestamp}.png`;
+
+      if (Array.isArray(result.data)) {
+        for (let index = 0; index < result.data.length; index++) {
+          const item = result.data[index];
+          if (item && item.url) {
+            const fileType = index === 0 ? "model" : 
+                             index === 1 ? "video" : 
+                             ["front", "back", "side"][index - 2];
+            const filePath = path.join(__dirname, 'uploads', `${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`);
+            await downloadFile(item.url, filePath);
+            modelFiles[fileType] = `http://localhost:5000/uploads/${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`;
           }
         }
+      } else {
+        throw new Error("Unexpected response format from Gradio");
+      }
+
+      if (Object.keys(modelFiles).length === 0) {
+        throw new Error("Failed to generate 3D model files. No valid URLs found in the response.");
       }
       
       return modelFiles;
