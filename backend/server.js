@@ -305,25 +305,31 @@ const generate3DModel = async (imageUrl) => {
         )
       ]);
 
-      console.log("Full Gradio response:", result);
+      console.log("Full Gradio response:", JSON.stringify(result, null, 2));
 
       if (!result || !result.data) {
         throw new Error("Invalid 3D model result data received from Gradio");
       }
 
-      // Extract URLs from the response
+      // Extract URLs or paths from the response
       const modelFiles = {};
       const timestamp = Date.now();
 
       if (Array.isArray(result.data)) {
         for (let index = 0; index < result.data.length; index++) {
           const item = result.data[index];
-          if (item && item.url) {
+          if (item && (item.url || item.path)) {
             const fileType = index === 0 ? "model" : 
                              index === 1 ? "video" : 
                              ["front", "back", "side"][index - 2];
             const filePath = path.join(__dirname, 'uploads', `${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`);
-            await downloadFile(item.url, filePath);
+            
+            if (item.url) {
+              await downloadFile(item.url, filePath);
+            } else if (item.path) {
+              await fs.promises.copyFile(item.path, filePath);
+            }
+            
             modelFiles[fileType] = `http://localhost:5000/uploads/${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`;
           }
         }
@@ -332,7 +338,7 @@ const generate3DModel = async (imageUrl) => {
       }
 
       if (Object.keys(modelFiles).length === 0) {
-        throw new Error("Failed to generate 3D model files. No valid URLs found in the response.");
+        throw new Error("Failed to generate 3D model files. No valid URLs or paths found in the response.");
       }
       
       return modelFiles;
