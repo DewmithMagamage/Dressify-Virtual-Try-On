@@ -1,88 +1,97 @@
-/* Cart.css */
 .cart-container {
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: white;
-    width: 300px;
-    height: 100%;
-    padding: 20px;
-    box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-  }
-  
-  .cart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .close-btn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .cart-items {
-    margin-top: 20px;
-  }
-  
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .item-name {
-    flex: 1;
-  }
-  
-  .item-price {
-    width: 60px;
-  }
-  
-  .item-quantity {
-    display: flex;
-    align-items: center;
-  }
-  
-  .item-quantity button {
-    padding: 5px;
-    cursor: pointer;
-  }
-  
-  .cart-total {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .checkout-btn {
-    background: green;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .product-list {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .product {
-    width: 200px;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .product button {
-    background: blue;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100vh;
+  background: white;
+  color: black;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: rgb(238, 66, 132); 
+}
+
+.cart-items {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.product-name {
+  flex: 2;
+}
+
+.product-price {
+  flex: 1;
+  text-align: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.quantity-controls button {
+  padding: 5px 10px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  fill: black;
+  transform: scale(1.1);
+}
+
+.cart-summary {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  text-align: center;
+}
+
+.checkout-btn {
+  background: rgb(32, 117, 32);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.checkout-btn:hover {
+  transform: scale(1.1);
+}

@@ -73,7 +73,7 @@ const TryOn = () => {
       <div className="upload-section">
         {loading && (
           <div className="loading-indicator">
-            <p>Processing your images, this may take up to 30 seconds...</p>
+            <p>Processing your images, this may take up to 1 minute...</p>
           </div>
         )}
 
@@ -81,20 +81,24 @@ const TryOn = () => {
 
         {generatedImage && (
           <div className="result-container">
-            <img
-              src={generatedImage}
-              alt="Try-On Result"
-              crossOrigin="anonymous"
-              className="result-image"
-              onLoad={() => console.log("Result image loaded successfully:", generatedImage)}
-              onError={(e) => {
-                console.error("Image failed to load:", e);
-                setError("Failed to load the generated image. Please try again.");
-              }}
-            />
-            <div className="checkout-text">
-              Checkout the fit
-            </div>
+            <h2 className="checkout-text">Checkout the fit </h2>
+            <div className="result-box">
+              <img
+                src={generatedImage}
+                alt="Try-On Result"
+                crossOrigin="anonymous"
+                className="result-image"
+                onLoad={() => console.log("Result image loaded successfully:", generatedImage)}
+                onError={(e) => {
+                  console.error("Image failed to load:", e);
+                  setError("Failed to load the generated image. Please try again.");
+                }}
+              />
+            </div>  
+            
+            <button className="next-step-btn" onClick={() => console.log("View in 3D clicked")}>
+              View in 3D
+            </button>
           </div>
         )}
       </div>

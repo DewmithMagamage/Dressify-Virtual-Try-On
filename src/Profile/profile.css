@@ -46,6 +46,10 @@ body {
   color: black;
 }
 
+.profile-content h2 {
+  color: black;
+}
+
 /* Left container for user details */
 .user-details {
   width: 300px;
