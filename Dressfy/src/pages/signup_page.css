@@ -124,6 +124,7 @@
 
 .text-center {
   text-align: center;
+  
 }
 
 .text-white {
@@ -136,6 +137,7 @@
 
 .text-gray-400 {
   color: rgb(156 163 175);
+  
 }
 
 .text-blue-400 {
@@ -227,4 +229,19 @@ select {
   background-position: right 0.5rem center;
   background-size: 1.5em 1.5em;
 }
+
+   .logo-container {
+    position: fixed;
+    top: 5px;  /* Adjust top spacing */
+    left: 20px; /* Adjust right spacing */
+    z-index: 1000; /* Keeps it above other elements */
+  }
+  
+  .logo {
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+  }
+
+
+
 

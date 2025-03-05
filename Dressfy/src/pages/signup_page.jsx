@@ -1,5 +1,6 @@
 import "./signup_page.css"
 import Google from '../assets/Google.jpg';
+import Logo from '../assets/Logo.jpg';
 
 export default function CreateAccount() {
   return (
@@ -18,14 +19,14 @@ export default function CreateAccount() {
       <div className="w-full max-w-md mx-4 p-6 bg-black/70 backdrop-blur-sm border border-gray-800 rounded-lg z-10 text-white">
         <div className="flex items-center justify-between mb-6">
           <div className="w-12 h-12">
-            <img src="/logo-placeholder.png" alt="Logo" className="w-12 h-12 rounded-lg" />
+            {/* { <img src="/logo-placeholder.png" alt="Logo" className="w-12 h-12 rounded-lg" /> } */}
           </div>
-          <div className="relative inline-block">
+          {/* <div className="relative inline-block">
             <select className="appearance-none bg-transparent text-white text-sm cursor-pointer pr-8 border border-gray-600 rounded px-2 py-1">
               <option value="en-US">English (US)</option>
               <option value="es">Español</option>
             </select>
-          </div>
+          </div> */}
         </div>
 
         <h1 className="text-2xl font-bold text-center mb-6">Create Account</h1>
@@ -36,7 +37,7 @@ export default function CreateAccount() {
             Sign up with Google
           </button>
           <button className="flex items-center justify-center w-full px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors">
-            <img src="/facebook-icon.png" alt="Facebook" className="w-5 h-5 mr-2" />
+            {/* <img src="/facebook-icon.png" alt="Facebook" className="w-5 h-5 mr-2" /> */}
             Sign up with Facebook
           </button>
         </div>
@@ -93,6 +94,9 @@ export default function CreateAccount() {
             Log in
           </a>
         </p>
+      </div>
+      <div className="logo-container">
+      <img src={Logo} alt="Dressify Logo" className="logo" />
       </div>
     </main>
   )
