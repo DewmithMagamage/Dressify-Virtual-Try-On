@@ -45,9 +45,6 @@ const Login = () => {
           <button className="google-btn">
             <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
           </button>
-          <button className="facebook-btn">
-            <img src="/IMAGES/facebook.png" alt="Facebook" className="social-icon" />Log in with Facebook
-          </button>
           </div>
           <p className="or-divider">- OR -</p>
        
@@ -84,7 +81,7 @@ const Login = () => {
           <button type="submit" className="login-btn">Log In</button>
         </form>
         <p className="link">
-          Don’t have an account? <Link to="/signup">Sign up</Link>
+          Don’t have an account? <Link to="/">Sign up</Link>
         </p>
       </div>
     </div>

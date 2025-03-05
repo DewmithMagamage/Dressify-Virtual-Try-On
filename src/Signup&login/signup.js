@@ -54,9 +54,6 @@ const Signup = () => {
           <button className="google-btn">
             <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
           </button>
-          <button className="facebook-btn">
-            <img src="/IMAGES/facebook.png" alt="Facebook" className="social-icon" />Log in with Facebook
-          </button>
           </div>
           <p className="or-divider">- OR -</p>
 
