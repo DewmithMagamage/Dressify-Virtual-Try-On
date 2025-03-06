@@ -2,13 +2,15 @@ import express from 'express';
 import multer from 'multer';
 import axios from 'axios';
 import FormData from 'form-data';
-import fs from 'fs';
+import fs from 'fs/promises';
+import fsSync from 'fs';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { client } from '@gradio/client';
 import { Blob } from 'blob-polyfill';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,7 +24,7 @@ const CONFIG = {
   ALLOWED_MIME_TYPES: ['image/jpeg', 'image/jpg', 'image/png'],
   DENOISING_STEPS: 20,
   SEED: 3,
-  HF_TOKEN: "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",
+  HF_TOKEN: "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",
   GRADIO_URL: "yisol/IDM-VTON",
   GRADIO_3D_URL: "Wuvin/Unique3D",
   MODEL_3D_PARAMS: {
@@ -48,6 +50,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json());
 
 // Set up static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
@@ -80,14 +83,14 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: { fileSize: CONFIG.MAX_FILE_SIZE }
 });
 
 // Create uploads directory if it doesn't exist
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
+if (!fsSync.existsSync('uploads')) {
+  fsSync.mkdirSync('uploads');
 }
 
 // Utility functions
@@ -96,8 +99,8 @@ const cleanupFiles = (files) => {
     if (!files) return;
     Object.keys(files).forEach(fieldName => {
       files[fieldName].forEach(file => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
+        if (fsSync.existsSync(file.path)) {
+          fsSync.unlinkSync(file.path);
           console.log(`Cleaned up temporary file: ${file.path}`);
         }
       });
@@ -119,7 +122,7 @@ const validateImage = (file) => {
 
 const fileToBlob = async (filePath) => {
   try {
-    const buffer = await fs.promises.readFile(filePath);
+    const buffer = await fs.readFile(filePath);
     return new Blob([buffer], { type: 'image/jpeg' });
   } catch (error) {
     throw new Error(`Failed to convert file to blob: ${error.message}`);
@@ -137,224 +140,202 @@ const downloadImage = async (url) => {
         'Accept': 'image/*, application/octet-stream'
       }
     });
-    
+
     if (response.status !== 200) {
       throw new Error(`Failed to download image, status: ${response.status}`);
     }
-    
+
     return Buffer.from(response.data);
   } catch (error) {
     throw new Error(`Failed to download result image: ${error.message}`);
   }
 };
 
-const downloadFile = async (url, outputPath) => {
-  try {
-    console.log(`Downloading file from: ${url}`);
-    const response = await axios.get(url, {
-      responseType: 'arraybuffer',
-      timeout: CONFIG.REQUEST_TIMEOUT * 2, // Longer timeout for 3D files
-      maxContentLength: 50 * 1024 * 1024, // Larger size limit for 3D files
-      headers: {
-        'Accept': '*/*'
-      }
-    });
-    
-    if (response.status !== 200) {
-      throw new Error(`Failed to download file, status: ${response.status}`);
-    }
-    
-    await fs.promises.writeFile(outputPath, Buffer.from(response.data));
-    return outputPath;
-  } catch (error) {
-    throw new Error(`Failed to download file: ${error.message}`);
-  }
-};
-
-const processImages = async (files) => {
-  let retries = 0;
-  
-  while (retries < CONFIG.MAX_RETRIES) {
-    try {
-      console.log(`Processing attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
-      
-      // Initialize Gradio client with timeout
-      const gradioApp = await Promise.race([
-        client(CONFIG.GRADIO_URL, {
-          hf_token: CONFIG.HF_TOKEN
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Gradio client initialization timeout')), CONFIG.REQUEST_TIMEOUT)
-        )
-      ]);
-      
-      console.log('Gradio client initialized successfully');
-      
-      // Convert files to blobs
-      const [frontBlob, garmentBlob] = await Promise.all([
-        fileToBlob(files.front[0].path),
-        fileToBlob(files.garment[0].path)
-      ]);
-
-      // Make prediction with timeout
-      const result = await Promise.race([
-        gradioApp.predict("/tryon", [
-          {
-            background: frontBlob,
-            layers: [],
-            composite: null
-          },
-          garmentBlob,
-          "",
-          true,
-          true,
-          CONFIG.DENOISING_STEPS,
-          CONFIG.SEED
-        ]),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Prediction timeout')), CONFIG.REQUEST_TIMEOUT * 2)
-        )
-      ]);
-
-      if (!result || !result.data) {
-        throw new Error("Invalid result data received from Gradio");
-      }
-
-      // Handle array result
-      if (Array.isArray(result.data) && result.data.length > 0) {
-        const firstItem = result.data[0];
-        if (firstItem && firstItem.url) {
-          const imageBuffer = await Promise.race([
-            downloadImage(firstItem.url),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Download timeout')), CONFIG.REQUEST_TIMEOUT)
-            )
-          ]);
-          return imageBuffer.toString('base64');
-        }
-      }
-      
-      // Handle direct base64 string
-      if (typeof result.data === 'string' && result.data.match(/^[A-Za-z0-9+/=]+$/)) {
-        return result.data;
-      }
-
-      throw new Error("Unexpected result format");
-      
-    } catch (error) {
-      retries++;
-      console.error(`Attempt ${retries} failed:`, error);
-      
-      if (retries === CONFIG.MAX_RETRIES) {
-        throw new Error(`Failed to process images after ${CONFIG.MAX_RETRIES} attempts: ${error.message}`);
-      }
-      
-      // Exponential backoff
-      const delay = Math.min(CONFIG.RETRY_DELAY * Math.pow(2, retries - 1), 30000);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
+// Debugging utility functions
+const logSystemInfo = () => {
+  console.log('Current working directory:', process.cwd());
+  console.log('Temp directory:', os.tmpdir());
+  console.log('Platform:', process.platform);
 };
 
 const generate3DModel = async (imageUrl) => {
-  let retries = 0;
-  
-  while (retries < CONFIG.MAX_RETRIES) {
-    try {
-      console.log(`Processing 3D model attempt ${retries + 1}/${CONFIG.MAX_RETRIES}`);
-      
-      // Download the image
-      console.log(`Downloading image from: ${imageUrl}`);
-      const response = await axios.get(imageUrl, {
-        responseType: 'arraybuffer',
-        timeout: CONFIG.REQUEST_TIMEOUT
-      });
-      
-      if (response.status !== 200) {
-        throw new Error(`Failed to download image, status: ${response.status}`);
-      }
-      
-      const imageBlob = new Blob([Buffer.from(response.data)], { type: 'image/png' });
-      console.log('Image downloaded and converted to blob successfully');
-      
-      // Initialize Gradio client
-      const gradioApp = await Promise.race([
-        client(CONFIG.GRADIO_3D_URL, {
-          hf_token: CONFIG.HF_TOKEN
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('3D Gradio client initialization timeout')), CONFIG.REQUEST_TIMEOUT)
-        )
-      ]);
-      
-      console.log('3D Gradio client initialized successfully');
-      
-      // Make prediction
-      const result = await Promise.race([
-        gradioApp.predict("/generate3dv2", [
-          imageBlob,
-          CONFIG.MODEL_3D_PARAMS.REMOVE_BACKGROUND,
-          CONFIG.MODEL_3D_PARAMS.SEED,
-          CONFIG.MODEL_3D_PARAMS.GENERATE_VIDEO,
-          CONFIG.MODEL_3D_PARAMS.REFINE_MULTIVIEW,
-          CONFIG.MODEL_3D_PARAMS.EXPANSION_WEIGHT,
-          CONFIG.MODEL_3D_PARAMS.MESH_INITIALIZATION
-        ]),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('3D prediction timeout')), CONFIG.REQUEST_TIMEOUT * 3)
-        )
-      ]);
+  // Log system info for debugging
+  logSystemInfo();
 
-      console.log("Full Gradio response:", JSON.stringify(result, null, 2));
+  try {
+    console.log(`Processing 3D model attempt 1/1`);
 
-      if (!result || !result.data) {
-        throw new Error("Invalid 3D model result data received from Gradio");
-      }
+    // Download the image
+    console.log(`Downloading image from: ${imageUrl}`);
+    const response = await axios.get(imageUrl, {
+      responseType: 'arraybuffer',
+      timeout: CONFIG.REQUEST_TIMEOUT
+    });
 
-      // Extract URLs or paths from the response
-      const modelFiles = {};
-      const timestamp = Date.now();
+    if (response.status !== 200) {
+      throw new Error(`Failed to download image, status: ${response.status}`);
+    }
 
-      if (Array.isArray(result.data)) {
-        for (let index = 0; index < result.data.length; index++) {
-          const item = result.data[index];
-          if (item && (item.url || item.path)) {
-            const fileType = index === 0 ? "model" : 
-                             index === 1 ? "video" : 
-                             ["front", "back", "side"][index - 2];
-            const filePath = path.join(__dirname, 'uploads', `${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`);
+    const imageBlob = new Blob([Buffer.from(response.data)], { type: 'image/png' });
+    console.log('Image downloaded and converted to blob successfully');
+
+    // Initialize Gradio client
+    const gradioApp = await Promise.race([
+      client(CONFIG.GRADIO_3D_URL, {
+        hf_token: CONFIG.HF_TOKEN
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('3D Gradio client initialization timeout')), CONFIG.REQUEST_TIMEOUT)
+      )
+    ]);
+
+    console.log('3D Gradio client initialized successfully');
+
+    // Make prediction
+    const result = await Promise.race([
+      gradioApp.predict("/generate3dv2", [
+        imageBlob,
+        CONFIG.MODEL_3D_PARAMS.REMOVE_BACKGROUND,
+        CONFIG.MODEL_3D_PARAMS.SEED,
+        CONFIG.MODEL_3D_PARAMS.GENERATE_VIDEO,
+        CONFIG.MODEL_3D_PARAMS.REFINE_MULTIVIEW,
+        CONFIG.MODEL_3D_PARAMS.EXPANSION_WEIGHT,
+        CONFIG.MODEL_3D_PARAMS.MESH_INITIALIZATION
+      ]),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('3D prediction timeout')), CONFIG.REQUEST_TIMEOUT * 3)
+      )
+    ]);
+
+    console.log("Full Gradio response:", JSON.stringify(result, null, 2));
+
+    if (!result || !result.data) {
+      throw new Error("Invalid 3D model result data received from Gradio");
+    }
+
+    // For the specific Gradio app we're using, we need to directly access the file URLs from the model
+    // Get the app configuration to examine available endpoints
+    const appConfig = await gradioApp.view_api();
+    console.log("Gradio API configuration:", JSON.stringify(appConfig, null, 2));
+    
+    // Create a map to store our model files
+    const modelFiles = {};
+    
+    // Try to get files from the result
+    if (Array.isArray(result.data)) {
+      const modelIndex = 0; // Model is typically the first item
+      const videoIndex = 1; // Video is typically the second item
+      
+      // Process model file (GLB)
+      if (result.data[modelIndex]) {
+        const modelItem = result.data[modelIndex];
+        console.log(`Processing model file:`, JSON.stringify(modelItem, null, 2));
+        
+        // Check if this is a file object with a path
+        if (modelItem.path && modelItem.orig_name) {
+          // Extract filename from path
+          const filename = modelItem.orig_name;
+          
+          // Try to get the file using an API call to the Gradio server
+          try {
+            // The file should be available at a URL like:
+            // https://wuvin-unique3d.hf.space/file=/tmp/gradio/generated_XXXXXX.glb
+            // Construct that URL
+            const baseUrl = CONFIG.GRADIO_3D_URL.includes('.hf.space') 
+              ? `https://${CONFIG.GRADIO_3D_URL.split('/').pop()}.hf.space`
+              : 'https://wuvin-unique3d.hf.space'; // Use known URL as fallback
+              
+            const fileUrl = `${baseUrl}/file=${modelItem.path}`;
+            console.log(`Attempting to download model from: ${fileUrl}`);
             
-            if (item.url) {
-              await downloadFile(item.url, filePath);
-            } else if (item.path) {
-              await fs.promises.copyFile(item.path, filePath);
+            try {
+              const fileResponse = await axios.get(fileUrl, {
+                responseType: 'arraybuffer',
+                timeout: CONFIG.REQUEST_TIMEOUT * 2,
+                headers: {
+                  'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
+                }
+              });
+              
+              if (fileResponse.status === 200) {
+                const base64Data = Buffer.from(fileResponse.data).toString('base64');
+                modelFiles.model = `data:application/octet-stream;base64,${base64Data}`;
+                console.log(`Successfully downloaded model file`);
+              } else {
+                console.error(`Failed to download model file, status: ${fileResponse.status}`);
+              }
+            } catch (downloadError) {
+              console.error(`Error downloading model file:`, downloadError);
             }
-            
-            modelFiles[fileType] = `http://localhost:5000/uploads/${fileType}-${timestamp}.${index === 0 ? 'glb' : index === 1 ? 'mp4' : 'png'}`;
+          } catch (error) {
+            console.error(`Failed to process model file:`, error);
           }
         }
-      } else {
-        throw new Error("Unexpected response format from Gradio");
-      }
-
-      if (Object.keys(modelFiles).length === 0) {
-        throw new Error("Failed to generate 3D model files. No valid URLs or paths found in the response.");
       }
       
-      return modelFiles;
-      
-    } catch (error) {
-      retries++;
-      console.error(`3D model attempt ${retries} failed:`, error);
-      
-      if (retries === CONFIG.MAX_RETRIES) {
-        throw new Error(`Failed to generate 3D model after ${CONFIG.MAX_RETRIES} attempts: ${error.message}`);
+      // Process video file (MP4) if present
+      if (result.data[videoIndex]) {
+        const videoItem = result.data[videoIndex];
+        if (videoItem && videoItem.path) {
+          console.log(`Processing video file:`, JSON.stringify(videoItem, null, 2));
+          
+          // Similar approach for video
+          try {
+            const baseUrl = CONFIG.GRADIO_3D_URL.includes('.hf.space') 
+              ? `https://${CONFIG.GRADIO_3D_URL.split('/').pop()}.hf.space`
+              : 'https://wuvin-unique3d.hf.space';
+              
+            const fileUrl = `${baseUrl}/file=${videoItem.path}`;
+            console.log(`Attempting to download video from: ${fileUrl}`);
+            
+            try {
+              const fileResponse = await axios.get(fileUrl, {
+                responseType: 'arraybuffer',
+                timeout: CONFIG.REQUEST_TIMEOUT * 2,
+                headers: {
+                  'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
+                }
+              });
+              
+              if (fileResponse.status === 200) {
+                const base64Data = Buffer.from(fileResponse.data).toString('base64');
+                modelFiles.video = `data:video/mp4;base64,${base64Data}`;
+                console.log(`Successfully downloaded video file`);
+              }
+            } catch (downloadError) {
+              console.error(`Error downloading video file:`, downloadError);
+            }
+          } catch (error) {
+            console.error(`Failed to process video file:`, error);
+          }
+        }
       }
-      
-      // Exponential backoff
-      const delay = Math.min(CONFIG.RETRY_DELAY * Math.pow(2, retries - 1), 30000);
-      await new Promise(resolve => setTimeout(resolve, delay));
     }
+    
+    // If we couldn't get files through direct calls, provide a clear error
+    if (Object.keys(modelFiles).length === 0) {
+      // For development/testing, we can create a placeholder
+      if (process.env.NODE_ENV === 'development') {
+        console.log("WARNING: Creating placeholder data for testing purposes");
+        modelFiles.model = `data:application/octet-stream;base64,${Buffer.from("Placeholder GLB data").toString('base64')}`;
+      } else {
+        throw new Error("Unable to retrieve 3D model files from Gradio. The API may have changed or files may be inaccessible.");
+      }
+    }
+
+    return modelFiles;
+
+  } catch (error) {
+    console.error(`3D model generation failed:`, error);
+    
+    // Additional detailed error logging
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+      console.error('Response headers:', error.response.headers);
+    }
+    
+    throw new Error(`Failed to generate 3D model: ${error.message}`);
   }
 };
 
@@ -367,7 +348,7 @@ app.post("/api/tryon", upload.fields([
     console.log("Received file upload request from frontend");
 
     if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "No files were uploaded.",
         success: false
       });
@@ -376,7 +357,7 @@ app.post("/api/tryon", upload.fields([
     const { front, garment } = req.files;
 
     if (!front || !garment) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "Missing files. Please upload both front view and garment images.",
         success: false
       });
@@ -387,23 +368,22 @@ app.post("/api/tryon", upload.fields([
       validateImage(garment[0]);
     } catch (error) {
       cleanupFiles(req.files);
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: error.message,
         success: false
       });
     }
 
     const result = await processImages(req.files);
-    
+
     if (!result || typeof result !== 'string') {
       throw new Error("Invalid image data received from model");
     }
-    
+
     const outputFilename = `generated-${Date.now()}.png`;
     const outputImagePath = path.join(__dirname, 'uploads', outputFilename);
-    
     await fs.promises.writeFile(outputImagePath, Buffer.from(result, 'base64'));
-    
+
     res.json({
       success: true,
       imageUrl: `http://localhost:5000/uploads/${outputFilename}`,
@@ -413,7 +393,7 @@ app.post("/api/tryon", upload.fields([
   } catch (error) {
     console.error("Error processing request:", error);
     if (req.files) cleanupFiles(req.files);
-    res.status(500).json({ 
+    res.status(500).json({
       error: error.message || "An unexpected error occurred while processing your request.",
       success: false
     });
@@ -423,29 +403,29 @@ app.post("/api/tryon", upload.fields([
 app.post("/api/generate3d", express.json(), async (req, res) => {
   try {
     console.log("Received 3D model generation request");
-    
+
     const { imageUrl } = req.body;
-    
+
     if (!imageUrl) {
       return res.status(400).json({
         error: "Missing imageUrl parameter",
         success: false
       });
     }
-    
+
     console.log(`Generating 3D model from image: ${imageUrl}`);
-    
+
     const modelFiles = await generate3DModel(imageUrl);
-    
+
     if (!modelFiles || Object.keys(modelFiles).length === 0) {
       throw new Error("Failed to generate 3D model files");
     }
-    
+
     res.json({
       success: true,
       modelData: modelFiles
     });
-    
+
   } catch (error) {
     console.error("Error processing 3D model request:", error);
     res.status(500).json({
@@ -455,9 +435,33 @@ app.post("/api/generate3d", express.json(), async (req, res) => {
   }
 });
 
+app.get("/api/test-hf-connection", async (req, res) => {
+  try {
+    // Test access to the Hugging Face Space
+    const response = await axios.get(`https://wuvin-unique3d.hf.space/`, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
+      },
+      timeout: 10000
+    });
+    
+    res.json({
+      success: true,
+      status: response.status,
+      message: "Successfully connected to Hugging Face Space"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to connect to Hugging Face Space",
+      error: error.message
+    });
+  }
+});
+
 app.get("/health", (req, res) => {
-  res.json({ 
-    status: "healthy", 
+  res.json({
+    status: "healthy",
     timestamp: new Date().toISOString(),
     corsStatus: "enabled"
   });
@@ -479,3 +483,5 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   if (process.env.NODE_ENV !== 'production') process.exit(1);
 });
+
+export default app;
