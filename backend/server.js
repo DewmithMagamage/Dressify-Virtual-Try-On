@@ -23,7 +23,7 @@ const CONFIG = {
   ALLOWED_MIME_TYPES: ['image/jpeg', 'image/jpg', 'image/png'],
   DENOISING_STEPS: 20,
   SEED: 3,
-  HF_TOKEN: "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",
+  HF_TOKEN: "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",
   GRADIO_URL: "yisol/IDM-VTON",
   GRADIO_3D_URL: "Wuvin/Unique3D",
   MODEL_3D_PARAMS: {
@@ -49,7 +49,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Set up static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
