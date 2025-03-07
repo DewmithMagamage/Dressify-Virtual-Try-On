@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 import "./login.css";
 
 const Login = () => {
@@ -9,7 +10,9 @@ const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
+    password: ''
   });
+  const [error, setError] = useState('');
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -23,9 +26,31 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      if (response.data.success) {
+        // Store the token in localStorage
+        localStorage.setItem('authToken', response.data.token);
+
+        // Redirect the user to the home page
+        navigate("/home");
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError('Invalid credentials');
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/home");
+    handleLogin(formData.email, formData.password);
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
   };
 
   return (
@@ -42,15 +67,12 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="social-login">
-          <button className="google-btn">
-            <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
-          </button>
+            <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+              <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
+            </button>
           </div>
           <p className="or-divider">- OR -</p>
-       
-          <div className="input-field">
-            <input type="text" placeholder="Full Name" required />
-          </div>
+
           <div className="input-field">
             <input
               type="email"
@@ -64,20 +86,17 @@ const Login = () => {
           <div className="input-field">
             <input
               type={passwordVisible ? "text" : "password"}
+              name="password"
               placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
             <span className="toggle-password" onClick={togglePassword}></span>
           </div>
-          <div className="input-field">
-            <input
-              type={passwordVisible ? "text" : "password"}
-              placeholder="Confirm Password"
-              required
-            />
-            <span className="toggle-password" onClick={togglePassword}></span>
-          </div>
-          
+
+          {error && <div className="error-message">{error}</div>}
+
           <button type="submit" className="login-btn">Log In</button>
         </form>
         <p className="link">

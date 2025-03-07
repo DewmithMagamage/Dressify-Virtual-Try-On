@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import './profile.css';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
@@ -14,6 +17,38 @@ const ProfilePage = () => {
   const handleNotifications = () => {
     alert("No new notifications.");
   };
+
+  useEffect(() => {
+    // Fetch images from the backend
+    axios.get('http://localhost:5000/api/images')
+      .then(response => {
+        setImages(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the images:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('authToken'); // Get token from local storage
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+      
+      try {
+        const response = await axios.get('http://localhost:5000/api/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProfile(response.data);
+      } catch (error) {
+        console.error('There was an error fetching the profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   return (
     <div className="profile-container">
@@ -31,18 +66,31 @@ const ProfilePage = () => {
       <div className="profile-content">
         <div className="user-details">
           <h2>User Details</h2>
-           <p><strong>User Name:</strong> Elena Grace</p>
-           <p><strong>Age:</strong> 24</p>
-           <p><strong>Phone Number:</strong> +9877 527 7829</p>
+          {profile ? (
+            <>
+              <p><strong>User Name:</strong> {profile.fullName}</p>
+              <p><strong>Email:</strong> {profile.email}</p>
+            </>
+          ) : (
+            <p>Loading user details...</p>
+          )}
         </div>
         <div className="user-history-outfit-history">
           <div className="user-history">
             <h2>User History</h2>
-            <p>Saved user Images</p>
+            {images.length > 0 ? (
+              images[0]?.fileUrl && <img src={images[0]?.fileUrl} alt="User body front" />
+            ) : (
+              <p>Loading user history...</p>
+            )}
           </div>
           <div className="outfit-history">
             <h2>Outfit History</h2>
-            <p>Saved clothing images</p>
+            {images.length > 1 ? (
+              images[1]?.fileUrl && <img src={images[1]?.fileUrl} alt="Garment" />
+            ) : (
+              <p>Loading outfit history...</p>
+            )}
           </div>
         </div>
       </div>
@@ -51,83 +99,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-/*const [measurements, setMeasurements] = useState({
-  waist: "",
-  torso: "",
-  bust: "",
-  shoulder: "",
-  arm: "",
-  leg: "",
-  hip: "",
-  height: ""
-});
-
-const handleMeasurementChange = (e) => {
-    const { name, value } = e.target;
-    setMeasurements({ ...measurements, [name]: value });
-  };
-  
-  <div className="measurements-container">
-          <h3>2. Enter your measurements</h3>
-          <div className="column">
-            <input
-              type="text"
-              name="waist"
-              placeholder="Waist Size in cm"
-              value={measurements.waist}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="torso"
-              placeholder="Torso Length in cm"
-              value={measurements.torso}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="bust"
-              placeholder="Bust size in cm"
-              value={measurements.bust}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="shoulder"
-              placeholder="Shoulder Width in cm"
-              value={measurements.shoulder}
-              onChange={handleMeasurementChange}
-            />
-          </div>
-          <div className="column">
-            <input
-              type="text"
-              name="arm"
-              placeholder="Arm Length in cm"
-              value={measurements.arm}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="leg"
-              placeholder="Leg Length in cm"
-              value={measurements.leg}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="hip"
-              placeholder="Hip Size in cm"
-              value={measurements.hip}
-              onChange={handleMeasurementChange}
-            />
-            <input
-              type="text"
-              name="height"
-              placeholder="Height in cm"
-              value={measurements.height}
-              onChange={handleMeasurementChange}
-            />
-          </div>
-        </div>*/

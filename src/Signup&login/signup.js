@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import axios from 'axios'; // Import axios for making HTTP requests
 import "./login.css";
 
 const Signup = () => {
@@ -32,9 +33,23 @@ const Signup = () => {
     setLanguage(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/login");
+    try {
+      const response = await axios.post('http://localhost:5000/api/signup', formData);
+      if (response.data.success) {
+        navigate("/login");
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error('There was an error signing up:', error);
+      alert('There was an error signing up. Please try again.');
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:5000/auth/google';
   };
 
   return (
@@ -51,14 +66,21 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="social-login">
-          <button className="google-btn">
-            <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
-          </button>
+            <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+              <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
+            </button>
           </div>
           <p className="or-divider">- OR -</p>
 
           <div className="input-field">
-            <input type="text" placeholder="Full Name" required />
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="input-field">
             <input
@@ -73,18 +95,24 @@ const Signup = () => {
           <div className="input-field">
             <input
               type={passwordVisible ? "text" : "password"}
+              name="password"
               placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
             <span className="toggle-password" onClick={togglePassword}></span>
           </div>
           <div className="input-field">
             <input
-              type={passwordVisible ? "text" : "password"}
+              type={confirmPasswordVisible ? "text" : "password"}
+              name="confirmPassword"
               placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               required
             />
-            <span className="toggle-password" onClick={togglePassword}></span>
+            <span className="toggle-password" onClick={toggleConfirmPassword}></span>
           </div>
             
           <button type="submit" className="login-btn">Create Account</button>
