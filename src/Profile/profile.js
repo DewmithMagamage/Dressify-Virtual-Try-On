@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import SettingsPopup from './settingsPopup';
 import './profile.css';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete your account?")) {
-      alert("Account deleted successfully.");
-    }
+  const handleSettingsClick = () => {
+    setIsSettingsOpen(true);
   };
 
-  const handleNotifications = () => {
-    alert("No new notifications.");
+  const handleCloseSettings = () => {
+    setIsSettingsOpen(false);
   };
 
   useEffect(() => {
@@ -27,9 +27,8 @@ const ProfilePage = () => {
       .catch(error => {
         console.error('There was an error fetching the images:', error);
       });
-  }, []);
 
-  useEffect(() => {
+    // Fetch user profile from the backend
     const fetchProfile = async () => {
       const token = localStorage.getItem('authToken'); // Get token from local storage
       if (!token) {
@@ -57,12 +56,14 @@ const ProfilePage = () => {
             <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
         </svg>
       </button> 
-      <h1>Profile</h1>
-      <button className="notifications-btn" onClick={handleNotifications}>
-        <svg className="notifications-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12.0001 5.5C14.7615 5.5 17.0001 7.73858 17.0001 10.5V12.7396C17.0001 13.2294 17.1798 13.7022 17.5052 14.0683L18.7809 15.5035C19.6408 16.4708 18.9541 18 17.6598 18H6.34031C5.04604 18 4.35933 16.4708 5.2192 15.5035L6.49486 14.0683C6.82028 13.7022 7.00004 13.2294 7.00004 12.7396L7.00006 10.5C7.00006 7.73858 9.23864 5.5 12.0001 5.5ZM12.0001 5.5V3M3 11.0001C3 7.87966 4.58803 5.13015 7 3.51562M21 11.0001C21 7.87966 19.412 5.13015 17 3.51562M11 21H13"></path>
+      
+      <button className="settings-btn" onClick={handleSettingsClick}>
+        <svg className="settings-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Zm8.99-5L19.415,9c-.008-.022-.036-.107-.046-.129l1.11-1.11a2.011,2.011,0,0,0,0-2.842l-1.4-1.4a2,2,0,0,0-1.421-.588h0a2,2,0,0,0-1.419.588L15.07,4.612,15,4.58V3.009A2.011,2.011,0,0,0,12.99,1H11.01A2.011,2.011,0,0,0,9,3.009L9,4.566l-.086.049-.043.016L7.765,3.522a2,2,0,0,0-1.42-.589h0a2,2,0,0,0-1.421.588l-1.4,1.4a2.011,2.011,0,0,0,0,2.842l1.1,1.143c-.013.029-.033.063-.043.093H3.01A2.011,2.011,0,0,0,1,11.009v1.982A2.011,2.011,0,0,0,3.01,15l1.575,0c.008.022.036.107.046.129l-1.11,1.11a2.011,2.011,0,0,0,0,2.842l1.4,1.4a2.059,2.059,0,0,0,2.842,0l1.115-1.115c.022.011.1.047.121.056v1.571A2.011,2.011,0,0,0,11.01,23h1.98A2.011,2.011,0,0,0,15,20.991l0-1.557.129-.065,1.109,1.109a2.058,2.058,0,0,0,2.843,0l1.4-1.4a2.011,2.011,0,0,0,0-2.842l-1.1-1.143c.013-.029.033-.063.043-.093H20.99A2.011,2.011,0,0,0,23,12.991V11.009A2.011,2.011,0,0,0,20.99,9Zm0,4H19.421a2.1,2.1,0,0,0-1.466,3.54l1.109,1.124-1.414,1.4-1.11-1.109A2.1,2.1,0,0,0,13,19.42L12.99,21,11,20.991V19.42a2.043,2.043,0,0,0-1.307-1.881,2.138,2.138,0,0,0-.816-.164,2,2,0,0,0-1.417.58L6.336,19.064l-1.4-1.414,1.108-1.108A2.1,2.1,0,0,0,4.579,13L3,12.991,3.01,11H4.579A2.1,2.1,0,0,0,6.045,7.46L4.936,6.336l1.414-1.4L7.46,6.045a2.04,2.04,0,0,0,2.227.419l.018-.007A2.04,2.04,0,0,0,11,4.58L11.01,3,13,3.009V4.58a2,2,0,0,0,1.227,1.845c.026.013.057.027.087.039a2.038,2.038,0,0,0,2.226-.419l1.124-1.109,1.4,1.414L17.956,7.458A2.1,2.1,0,0,0,19.421,11H20.99l.01.009Z"></path>
         </svg>
       </button>
+
+      <h1>Profile</h1>
       <div className="profile-content">
         <div className="user-details">
           <h2>User Details</h2>
@@ -94,6 +95,10 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <SettingsPopup
+        isOpen={isSettingsOpen}
+        onClose={handleCloseSettings}
+      />
     </div>
   );
 };

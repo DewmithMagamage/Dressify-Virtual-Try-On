@@ -11,6 +11,7 @@ import Clothes from './Upload/clothes';
 import Navbar from './Components/navbar';
 import Signup from './Signup&login/signup';
 import Login from './Signup&login/login';
+import PrivateRoute from './Components/PrivateRoute';
 
 function App() {
   return (
@@ -19,14 +20,14 @@ function App() {
         <Navbar /> 
         <Routes>
           <Route path="/" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/body" element={<Body />} />
-          <Route path="/clothes" element={<Clothes />} />
-          <Route path="/try-on" element={<TryOn />} /> 
           <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<PrivateRoute component={Home} />} />
+          <Route path="/profile" element={<PrivateRoute component={Profile} />} />
+          <Route path="/shop" element={<PrivateRoute component={Shop} />} />
+          <Route path="/cart" element={<PrivateRoute component={Cart} />} />
+          <Route path="/body" element={<PrivateRoute component={Body} />} />
+          <Route path="/clothes" element={<PrivateRoute component={Clothes} />} />
+          <Route path="/try-on" element={<PrivateRoute component={TryOn} />} /> 
         </Routes>
       </div>
     </Router>

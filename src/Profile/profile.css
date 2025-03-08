@@ -82,26 +82,27 @@ body {
   height: 100%;
 }
 
-/* Notifications button */
-.notifications-btn {
+/* Settings button */
+.profile-container .settings-btn {
   position: absolute;
   background: none;
   border: none;
-  outline: none;
   top: 60px;
   right: 70px;
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 
-.notifications-icon {
-  fill: rgba(247, 131, 176, 0.801);
+.profile-container .settings-icon {
+  fill: white;
+  background: transparent;
 }
 
-.notifications-icon:hover {
-  fill:rgb(238, 66, 132);
+.profile-container .settings-btn:hover .settings-icon {
+  fill:rgba(247, 131, 176, 0.801);
+  transform: scale(1.1);
+  background: transparent;
 }
 
 /*.save-btn {
