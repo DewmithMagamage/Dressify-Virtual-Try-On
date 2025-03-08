@@ -23,7 +23,7 @@ const CONFIG = {
   ALLOWED_MIME_TYPES: ['image/jpeg', 'image/jpg', 'image/png'],
   DENOISING_STEPS: 20,
   SEED: 3,
-  HF_TOKEN: "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",
+  HF_TOKEN: "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",
   GRADIO_URL: "yisol/IDM-VTON",
   GRADIO_3D_URL: "Wuvin/Unique3D",
   MODEL_3D_PARAMS: {
@@ -247,38 +247,70 @@ const generate3DModel = async (imageUrl) => {
   // Log system info for debugging
   logSystemInfo();
 
+  let imageBuffer;
+  let gradioApp;
+
   try {
-    console.log(`Processing 3D model from image`);
-
-    // Download the image
-    console.log(`Downloading image from: ${imageUrl}`);
-    const response = await axios.get(imageUrl, {
-      responseType: 'arraybuffer',
-      timeout: CONFIG.REQUEST_TIMEOUT
-    });
-
-    if (response.status !== 200) {
-      throw new Error(`Failed to download image, status: ${response.status}`);
+    console.log("Starting 3D model generation process");
+    
+    // Step 1: Handle the image URL
+    try {
+      if (imageUrl.startsWith('data:image/')) {
+        // It's a base64 data URL
+        console.log("Processing base64 image data");
+        const base64Data = imageUrl.split(',')[1];
+        imageBuffer = Buffer.from(base64Data, 'base64');
+      } else {
+        // It's a regular URL
+        console.log(`Downloading image from URL: ${imageUrl}`);
+        const response = await axios.get(imageUrl, {
+          responseType: 'arraybuffer',
+          timeout: CONFIG.REQUEST_TIMEOUT
+        });
+        imageBuffer = Buffer.from(response.data);
+      }
+      console.log("Image data prepared successfully");
+    } catch (imageError) {
+      console.error("Error processing image:", imageError);
+      throw new Error(`Failed to process image: ${imageError.message}`);
     }
 
-    const imageBlob = new Blob([Buffer.from(response.data)], { type: 'image/png' });
-    console.log('Image downloaded and converted to blob successfully');
-
-    // Initialize Gradio client
-    const gradioApp = await Promise.race([
-      client(CONFIG.GRADIO_3D_URL, {
+    // Step 2: Initialize the Gradio client
+    try {
+      console.log(`Initializing Gradio client: ${CONFIG.GRADIO_3D_URL}`);
+      gradioApp = await client(CONFIG.GRADIO_3D_URL, {
         hf_token: CONFIG.HF_TOKEN
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('3D Gradio client initialization timeout')), CONFIG.REQUEST_TIMEOUT)
-      )
-    ]);
+      });
+      console.log("Gradio client initialized successfully");
+    } catch (initError) {
+      console.error("Error initializing Gradio client:", initError);
+      throw new Error(`Failed to initialize Gradio client: ${initError.message}`);
+    }
 
-    console.log('3D Gradio client initialized successfully');
+    // Step 3: Create and verify the image blob
+    let imageBlob;
+    try {
+      imageBlob = new Blob([imageBuffer], { type: 'image/png' });
+      console.log("Image blob created:", imageBlob.size, "bytes");
+      
+      if (imageBlob.size === 0) {
+        throw new Error("Created image blob has zero size");
+      }
+    } catch (blobError) {
+      console.error("Error creating image blob:", blobError);
+      throw new Error(`Failed to create image blob: ${blobError.message}`);
+    }
 
-    // Make prediction
-    const result = await Promise.race([
-      gradioApp.predict("/generate3dv2", [
+    // Step 4: Make the prediction
+    let result;
+    try {
+      console.log("Sending prediction request to Gradio with params:", {
+        removeBackground: CONFIG.MODEL_3D_PARAMS.REMOVE_BACKGROUND,
+        seed: CONFIG.MODEL_3D_PARAMS.SEED,
+        generateVideo: CONFIG.MODEL_3D_PARAMS.GENERATE_VIDEO
+      });
+      
+      result = await gradioApp.predict("/generate3dv2", [
         imageBlob,
         CONFIG.MODEL_3D_PARAMS.REMOVE_BACKGROUND,
         CONFIG.MODEL_3D_PARAMS.SEED,
@@ -286,102 +318,81 @@ const generate3DModel = async (imageUrl) => {
         CONFIG.MODEL_3D_PARAMS.REFINE_MULTIVIEW,
         CONFIG.MODEL_3D_PARAMS.EXPANSION_WEIGHT,
         CONFIG.MODEL_3D_PARAMS.MESH_INITIALIZATION
-      ]),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('3D prediction timeout')), CONFIG.REQUEST_TIMEOUT * 3)
-      )
-    ]);
-
-    console.log("3D model generation completed");
-    console.log("Full Gradio response:", JSON.stringify(result, null, 2));
-
-    if (!result || !result.data) {
-      throw new Error("Invalid 3D model result data received from Gradio");
+      ]);
+      
+      console.log("Prediction request completed");
+    } catch (predictionError) {
+      console.error("Error making prediction:", predictionError);
+      throw new Error(`Failed to make prediction: ${predictionError.message}`);
     }
 
-    // Create a map to store our model data
+    // Step 5: Validate the result
+    if (!result) {
+      throw new Error("Received null result from Gradio");
+    }
+    
+    console.log("Result received:", typeof result, "with keys:", Object.keys(result));
+    
+    if (!result.data) {
+      throw new Error("Result does not contain 'data' property");
+    }
+
+    // Step 6: Process the result data
     const modelData = {};
-
-    // Process model and video data from result
+    
     if (Array.isArray(result.data)) {
-      // Model is typically the first item (GLB file)
-      if (result.data[0] && result.data[0].path) {
-        const modelItem = result.data[0];
-        console.log(`Processing model file:`, JSON.stringify(modelItem, null, 2));
-
-        // Construct the download URL using the path
-        const baseUrl = CONFIG.GRADIO_3D_URL.includes('.hf.space')
-          ? `https://${CONFIG.GRADIO_3D_URL.split('/').pop()}.hf.space`
-          : 'https://wuvin-unique3d.hf.space'; // Use known URL as fallback
-
-        const fileUrl = `${baseUrl}/file=${modelItem.path}`;
-        console.log(`Attempting to download model from: ${fileUrl}`);
-
-        try {
-          const fileResponse = await axios.get(fileUrl, {
-            responseType: 'arraybuffer',
-            timeout: CONFIG.REQUEST_TIMEOUT * 2,
-            headers: {
-              'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
-            }
-          });
-
-          if (fileResponse.status === 200) {
-            const base64Data = Buffer.from(fileResponse.data).toString('base64');
-            modelData.model = `data:model/gltf-binary;base64,${base64Data}`;
-            console.log(`Successfully downloaded model file`);
-          } else {
-            console.error(`Failed to download model file, status: ${fileResponse.status}`);
-          }
-        } catch (downloadError) {
-          console.error(`Error downloading model file:`, downloadError);
+      console.log("Result.data is an array with length:", result.data.length);
+      
+      for (let i = 0; i < result.data.length; i++) {
+        const item = result.data[i];
+        console.log(`Result item ${i}:`, item);
+        
+        if (!item || typeof item !== 'object') {
+          console.log(`Item ${i} is not an object, skipping`);
+          continue;
+        }
+        
+        if (!item.path) {
+          console.log(`Item ${i} doesn't have a path property, skipping`);
+          continue;
+        }
+        
+        // Process the item based on its file extension
+        const path = item.path;
+        const isGlb = path.endsWith('.glb');
+        const isMp4 = path.endsWith('.mp4');
+        
+        if (!isGlb && !isMp4) {
+          console.log(`Skipping item with path ${path} - not a supported file type`);
+          continue;
+        }
+        
+        // Simplified approach: just use the direct URL to the file
+        const fileUrl = `https://wuvin-unique3d.hf.space/file=${encodeURIComponent(path)}`;
+        
+        if (isGlb) {
+          modelData.model = fileUrl;
+          console.log(`Added model URL: ${fileUrl}`);
+        } else if (isMp4) {
+          modelData.video = fileUrl;
+          console.log(`Added video URL: ${fileUrl}`);
         }
       }
-
-      // Video is typically the second item
-      if (result.data[1] && result.data[1].path) {
-        const videoItem = result.data[1];
-        console.log(`Processing video file:`, JSON.stringify(videoItem, null, 2));
-
-        // Construct the download URL using the path
-        const baseUrl = CONFIG.GRADIO_3D_URL.includes('.hf.space')
-          ? `https://${CONFIG.GRADIO_3D_URL.split('/').pop()}.hf.space`
-          : 'https://wuvin-unique3d.hf.space'; // Use known URL as fallback
-
-        const fileUrl = `${baseUrl}/file=${videoItem.path}`;
-        console.log(`Attempting to download video from: ${fileUrl}`);
-
-        try {
-          const fileResponse = await axios.get(fileUrl, {
-            responseType: 'arraybuffer',
-            timeout: CONFIG.REQUEST_TIMEOUT * 2,
-            headers: {
-              'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
-            }
-          });
-
-          if (fileResponse.status === 200) {
-            const base64Data = Buffer.from(fileResponse.data).toString('base64');
-            modelData.video = `data:video/mp4;base64,${base64Data}`;
-            console.log(`Successfully downloaded video file`);
-          } else {
-            console.error(`Failed to download video file, status: ${fileResponse.status}`);
-          }
-        } catch (downloadError) {
-          console.error(`Error downloading video file:`, downloadError);
-        }
-      }
+    } else {
+      console.log("Result.data is not an array:", typeof result.data);
+      throw new Error("Expected result.data to be an array");
     }
 
-    // Check if any model data was successfully retrieved
+    // Verify we have at least one file
     if (Object.keys(modelData).length === 0) {
-      throw new Error("No valid 3D model data found in the response");
+      throw new Error("No valid files found in the result");
     }
-
+    
+    console.log("Successfully processed 3D generation result:", modelData);
     return modelData;
 
   } catch (error) {
-    console.error(`3D model generation failed:`, error);
+    console.error("3D model generation failed:", error);
     throw new Error(`Failed to generate 3D model: ${error.message}`);
   }
 };
@@ -461,18 +472,26 @@ app.post("/api/generate3d", express.json(), async (req, res) => {
       });
     }
 
-    console.log(`Generating 3D model from image: ${imageUrl}`);
+    console.log(`Processing 3D generation request for image`);
 
-    const modelFiles = await generate3DModel(imageUrl);
+    try {
+      const modelFiles = await generate3DModel(imageUrl);
 
-    if (!modelFiles || Object.keys(modelFiles).length === 0) {
-      throw new Error("Failed to generate 3D model files");
+      if (!modelFiles || Object.keys(modelFiles).length === 0) {
+        throw new Error("Failed to generate 3D model files");
+      }
+
+      res.json({
+        success: true,
+        modelData: modelFiles
+      });
+    } catch (modelError) {
+      console.error("Error in 3D model generation:", modelError);
+      res.status(500).json({
+        error: modelError.message || "Failed to generate 3D model",
+        success: false
+      });
     }
-
-    res.json({
-      success: true,
-      modelData: modelFiles
-    });
 
   } catch (error) {
     console.error("Error processing 3D model request:", error);
@@ -483,25 +502,34 @@ app.post("/api/generate3d", express.json(), async (req, res) => {
   }
 });
 
-app.get("/api/test-hf-connection", async (req, res) => {
+app.get("/api/test-hf-token", async (req, res) => {
   try {
-    // Test access to the Hugging Face Space
-    const response = await axios.get(`https://wuvin-unique3d.hf.space/`, {
+    console.log("Testing Hugging Face token");
+    
+    const response = await axios.get('https://huggingface.co/api/whoami', {
       headers: {
         'Authorization': `Bearer ${CONFIG.HF_TOKEN}`
-      },
-      timeout: 10000
+      }
     });
     
-    res.json({
-      success: true,
-      status: response.status,
-      message: "Successfully connected to Hugging Face Space"
-    });
+    if (response.status === 200) {
+      res.json({
+        success: true,
+        message: "Hugging Face token is valid",
+        userData: response.data
+      });
+    } else {
+      res.status(response.status).json({
+        success: false,
+        message: "Failed to validate Hugging Face token",
+        status: response.status
+      });
+    }
   } catch (error) {
+    console.error("Error testing Hugging Face token:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to connect to Hugging Face Space",
+      message: "Error testing Hugging Face token",
       error: error.message
     });
   }
