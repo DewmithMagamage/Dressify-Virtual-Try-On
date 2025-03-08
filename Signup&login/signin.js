@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Social button click handlers
+
   document.querySelector('#google-btn').addEventListener('click', () => {
     window.location.href = 'https://accounts.google.com/';
   });
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'https://www.facebook.com/';
   });
 
-  // Language toggle
+
   const languageDropdown = document.querySelector('#language-toggle');
   languageDropdown.addEventListener('click', () => {
     alert('Language selection dropdown clicked!');
