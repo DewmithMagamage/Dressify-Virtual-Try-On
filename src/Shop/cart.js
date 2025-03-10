@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from "react-router-dom";
 import './cart.css';
 
-const Cart = () => {
-  const location = useLocation();
-  const { cart } = location.state || { cart: [] };
+const Cart = ({ cart, isOpen, onClose }) => {
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
 
-  const [cartItems, setCartItems] = useState(cart);
+  useEffect(() => {
+    if (Array.isArray(cart)) {
+      setCartItems(cart);
+    }
+  }, [cart]);
 
   const increaseQuantity = (productName) => {
     setCartItems(cartItems.map(item => 
@@ -27,10 +31,11 @@ const Cart = () => {
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
 
   return (
-    <div className="cart-container">
-      <button className="close-btn" onClick={() => window.history.back()}>X</button>
-      <h2>Your Cart</h2>
+    <div className={`cart-container ${isOpen ? 'open' : ''}`}>
       <div className="cart-items">
+        <button className="close-btn" onClick={onClose}>X</button>
+        <h2 className="heading1">Your Cart</h2>
+      
         {cartItems.length > 0 ? (
           cartItems.map((item, index) => (
             <div key={index} className="cart-item">

@@ -21,13 +21,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<PrivateRoute component={Home} />} />
-          <Route path="/profile" element={<PrivateRoute component={Profile} />} />
-          <Route path="/shop" element={<PrivateRoute component={Shop} />} />
-          <Route path="/cart" element={<PrivateRoute component={Cart} />} />
-          <Route path="/body" element={<PrivateRoute component={Body} />} />
-          <Route path="/clothes" element={<PrivateRoute component={Clothes} />} />
-          <Route path="/try-on" element={<PrivateRoute component={TryOn} />} /> 
+          <Route path="/home" element={<PrivateRoute element={Home} />} />
+          <Route path="/profile" element={<PrivateRoute element={Profile} />} />
+          <Route path="/shop" element={<PrivateRoute element={Shop} />} />
+          <Route path="/cart" element={<PrivateRoute element={Cart} />} />
+          <Route path="/body" element={<PrivateRoute element={Body} />} />
+          <Route path="/clothes" element={<PrivateRoute element={Clothes} />} />
+          <Route path="/try-on" element={<PrivateRoute element={TryOn} />} /> 
         </Routes>
       </div>
     </Router>

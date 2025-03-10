@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './settingsPopup.css';
@@ -9,8 +9,20 @@ const SettingsPopup = ({ isOpen, onClose }) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Store token from Google OAuth login if it's in the URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      localStorage.setItem('authToken', token);
+      // Remove token from URL to keep it clean
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const handleDeleteAccountClick = () => {
-    setShowDeleteConfirm(true); // Show the delete confirmation popup
+    setShowDeleteConfirm(true); 
   };
 
   const handleConfirmDeleteAccount = async () => {
@@ -31,16 +43,16 @@ const SettingsPopup = ({ isOpen, onClose }) => {
       console.error('Error deleting account:', error);
       setMessage("Error deleting account. Please try again.");
     } finally {
-      setShowDeleteConfirm(false); // Close the delete confirmation popup
+      setShowDeleteConfirm(false); 
     }
   };
 
   const handleCancelDeleteAccount = () => {
-    setShowDeleteConfirm(false); // Close the delete confirmation popup
+    setShowDeleteConfirm(false); 
   };
 
   const handleLogoutClick = () => {
-    setShowLogoutConfirm(true); // Show the logout confirmation popup
+    setShowLogoutConfirm(true);
   };
 
   const handleConfirmLogout = async () => {
@@ -53,12 +65,12 @@ const SettingsPopup = ({ isOpen, onClose }) => {
       console.error('Error logging out:', error);
       setMessage("Error logging out. Please try again.");
     } finally {
-      setShowLogoutConfirm(false); // Close the logout confirmation popup
+      setShowLogoutConfirm(false); 
     }
   };
 
   const handleCancelLogout = () => {
-    setShowLogoutConfirm(false); // Close the logout confirmation popup
+    setShowLogoutConfirm(false);
   };
 
   return (

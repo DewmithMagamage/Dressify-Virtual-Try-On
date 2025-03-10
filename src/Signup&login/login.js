@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -13,6 +13,15 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('authToken', token);
+      navigate('/home');
+    }
+  }, [navigate]);
 
   const togglePassword = () => {
     setPasswordVisible(!passwordVisible);
@@ -30,11 +39,8 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/login', { email, password });
       if (response.data.success) {
-        // Store the token in localStorage
-        localStorage.setItem('authToken', response.data.token);
-
-        // Redirect the user to the home page
-        navigate("/home");
+        localStorage.setItem('authToken', response.data.token); // Store the token in localStorage
+        navigate("/home");// Redirect the user to the home page
       } else {
         setError(response.data.message);
       }
@@ -50,7 +56,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/auth/google';
+    window.location.href = 'http://localhost:5000/auth/google/login';
   };
 
   return (
