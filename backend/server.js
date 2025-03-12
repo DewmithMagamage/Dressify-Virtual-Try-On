@@ -10,38 +10,50 @@ import { dirname } from 'path';
 import { client } from '@gradio/client';
 import { Blob } from 'blob-polyfill';
 import os from 'os';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Configuration
 const CONFIG = {
-  MAX_RETRIES: 3,
-  RETRY_DELAY: 5000,
-  REQUEST_TIMEOUT: 60000,
-  MAX_FILE_SIZE: 5 * 1024 * 1024,
-  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/jpg', 'image/png'],
-  DENOISING_STEPS: 20,
-  SEED: 3,
-  HF_TOKEN: "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",
-  GRADIO_URL: "yisol/IDM-VTON",
-  GRADIO_3D_URL: "Wuvin/Unique3D",
+  MAX_RETRIES: parseInt(process.env.MAX_RETRIES || '3'),
+  RETRY_DELAY: parseInt(process.env.RETRY_DELAY || '5000'),
+  REQUEST_TIMEOUT: parseInt(process.env.REQUEST_TIMEOUT || '60000'),
+  MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE || '5242880'), // 5MB default
+  ALLOWED_MIME_TYPES: (process.env.ALLOWED_MIME_TYPES || 'image/jpeg,image/jpg,image/png').split(','),
+  DENOISING_STEPS: parseInt(process.env.DENOISING_STEPS || '20'),
+  SEED: parseInt(process.env.SEED || '3'),
+  HF_TOKEN: process.env.HF_TOKEN,
+  GRADIO_URL: process.env.GRADIO_URL || "yisol/IDM-VTON",
+  GRADIO_3D_URL: process.env.GRADIO_3D_URL || "Wuvin/Unique3D",
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
+  BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:5000',
   MODEL_3D_PARAMS: {
-    REMOVE_BACKGROUND: true,
-    SEED: -1,
-    GENERATE_VIDEO: true,
-    REFINE_MULTIVIEW: true,
-    EXPANSION_WEIGHT: -1,
-    MESH_INITIALIZATION: "std"
+    REMOVE_BACKGROUND: process.env.MODEL_3D_REMOVE_BACKGROUND === 'true',
+    SEED: parseInt(process.env.MODEL_3D_SEED || '-1'),
+    GENERATE_VIDEO: process.env.MODEL_3D_GENERATE_VIDEO === 'true',
+    REFINE_MULTIVIEW: process.env.MODEL_3D_REFINE_MULTIVIEW === 'true',
+    EXPANSION_WEIGHT: parseInt(process.env.MODEL_3D_EXPANSION_WEIGHT || '-1'),
+    MESH_INITIALIZATION: process.env.MODEL_3D_MESH_INITIALIZATION || "std"
   }
 };
+
+// Verify essential configuration
+if (!CONFIG.HF_TOKEN) {
+  console.error("ERROR: Hugging Face token (HF_TOKEN) is not set in environment variables.");
+  process.exit(1);
+}
 
 // Initialize express app
 const app = express();
 
 // Configure CORS for frontend
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: CONFIG.FRONTEND_URL,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Type', 'Content-Disposition'],
@@ -56,7 +68,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   setHeaders: (res, path) => {
     res.setHeader('Content-Type', getContentType(path));
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', CONFIG.FRONTEND_URL);
     res.setHeader('Access-Control-Allow-Methods', 'GET');
   }
 }));
@@ -116,7 +128,7 @@ const validateImage = (file) => {
     throw new Error(`${file.originalname} must be a JPEG or PNG image`);
   }
   if (file.size > CONFIG.MAX_FILE_SIZE) {
-    throw new Error(`${file.originalname} exceeds the 5MB size limit`);
+    throw new Error(`${file.originalname} exceeds the ${CONFIG.MAX_FILE_SIZE / (1024 * 1024)}MB size limit`);
   }
 };
 
@@ -445,7 +457,7 @@ app.post("/api/tryon", upload.fields([
     
     res.json({
       success: true,
-      imageUrl: `http://localhost:5000/uploads/${outputFilename}`,
+      imageUrl: `${CONFIG.BACKEND_URL}/uploads/${outputFilename}`,
       imageData: `data:image/png;base64,${result}`
     });
 
@@ -539,7 +551,13 @@ app.get("/health", (req, res) => {
   res.json({
     status: "healthy",
     timestamp: new Date().toISOString(),
-    corsStatus: "enabled"
+    corsStatus: "enabled",
+    config: {
+      frontend: CONFIG.FRONTEND_URL,
+      backend: CONFIG.BACKEND_URL,
+      gradioUrl: CONFIG.GRADIO_URL,
+      gradio3dUrl: CONFIG.GRADIO_3D_URL
+    }
   });
 });
 
@@ -547,6 +565,7 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`CORS configured for: ${CONFIG.FRONTEND_URL}`);
 });
 
 // Error handling

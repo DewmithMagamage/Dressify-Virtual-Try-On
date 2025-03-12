@@ -5,6 +5,7 @@
     "axios": "^1.7.9",
     "blob-polyfill": "^9.0.20240710",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "form-data": "^4.0.1",
     "fs": "^0.0.1-security",
