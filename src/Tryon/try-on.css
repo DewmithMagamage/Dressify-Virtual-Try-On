@@ -191,39 +191,89 @@ body {
 }
 
 /* Responsive adjustments */
-@media (max-width: 968px) {
+/* Responsive Adjustments */
+@media (max-width: 767px) {
   .frosted-container {
-    flex-direction: column;
-    width: 95%;
-    padding: 20px;
+    width: 80%;
+    min-height: auto;
+    padding: 15px;
+    margin-left: 20%;
   }
 
-  .result-container {
+  .upload-section {
     flex-direction: column;
     gap: 20px;
+    padding: 10px;
   }
 
-  .result-image {
-    max-width: 100%;
+  .upload-box {
+    width: 110px;
+    height: 130px;
   }
 
-  .checkout-text {
+  .upload-title {
+    padding-left: 20px;
+    font-size: 1.5rem;
+  }
+
+  .upload-box.large {
+    width: 210px;
+    height: 270px;
+  }
+
+  .instructions-container .body-text,
+  .instructions-container .clothes-text {
     text-align: center;
-    font-size: 24px;
-    margin-top: 0;
+    font-size: 1rem;
   }
 
-  .model-display {
-    flex-direction: column;
-    align-items: center;
+  .next-step-btn, .save-btn {
+    font-size: 1.1rem;
+    padding: 9px 22px;
+  }
+
+  .back-button {
+    top: 18px;
+    left: 18px;
+  }
+
+  .back-arrow-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Result container adjustments */
+  .result-container {
+    width: 100%;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  /* Result box adjustments */
+  .result-container .result-box {
+    width: 220px;
+    height: 280px;
+  }
+
+  /* Model container adjustments */
+  .model-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 15px;
   }
 
   .video-container,
   .model-viewer-container {
-    width: 95%;
+    width: 100%;
+    max-width: 100%;
   }
 
-  .model-iframe {
-    height: 300px;
+  .model-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .model-video, .model-iframe {
+    width: 100%;
+    max-height: 250px;
   }
 }

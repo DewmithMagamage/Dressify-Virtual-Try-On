@@ -12,6 +12,7 @@ import Navbar from './Components/navbar';
 import Signup from './Signup&login/signup';
 import Login from './Signup&login/login';
 import PrivateRoute from './Components/PrivateRoute';
+import AuthHandler from './Auth/AuthHandler';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/body" element={<PrivateRoute element={Body} />} />
           <Route path="/clothes" element={<PrivateRoute element={Clothes} />} />
           <Route path="/try-on" element={<PrivateRoute element={TryOn} />} /> 
+          <Route path="/auth/callback" element={<AuthHandler />} />
         </Routes>
       </div>
     </Router>

@@ -88,7 +88,7 @@ body {
 @media (max-width: 768px) {
     .navbar {
         top: 20%;
-        left: 10%;
+        left: 5%;
         width: 50px;
         height: 45vh;
     }
@@ -107,30 +107,5 @@ body {
         width: 35px;
         height: 35px;
         padding: 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar {
-        top: 10%;
-        left: 15%;
-        width: 45px;
-        height: 40vh;
-    }
-
-    .logo {
-        top: 10px;
-        left: 3%;
-        width: 80px;
-    }
-
-    .nav-icons {
-        padding: 10px 0;
-    }
-
-    .home-btn, .tryOn-btn, .shop-btn, .profile-btn {
-        width: 30px;
-        height: 30px;
-        padding: 6px;
     }
 }

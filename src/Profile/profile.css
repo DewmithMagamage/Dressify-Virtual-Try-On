@@ -105,13 +105,26 @@ body {
   background: transparent;
 }
 
-/*.save-btn {
-  background-color: rgb(84, 175, 84);
-  color: white;
-}
+/* Responsive Adjustment */
+@media (max-width: 768px) {
+  .profile-container {
+      width: 97%;
+      height: auto;
+      padding: 30px;
+  }
 
-.save-btn:hover {
-  background-color: rgb(44, 126, 44);
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}*/
+  .profile-content {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .user-details, 
+  .user-history-outfit-history {
+      width: 100%;
+  }
+
+  .profile-container .settings-btn {
+      top: 20px;
+      right: 20px;
+  }
+}

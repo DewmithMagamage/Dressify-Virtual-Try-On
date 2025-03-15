@@ -20,7 +20,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     // Fetch images from the backend
-    const fetchData = async () => {
+    const fetchImages = async () => {
       const token = localStorage.getItem('authToken');
       if (!token) {
         console.error('No token found');
@@ -28,17 +28,15 @@ const ProfilePage = () => {
       }
   
       try {
-        const [profileRes, imagesRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/profile', { headers: { Authorization: `Bearer ${token}` } }),
+        const [imagesRes] = await Promise.all([ 
           axios.get('http://localhost:5000/api/images', { headers: { Authorization: `Bearer ${token}` } })
         ]);
   
-        setProfile(profileRes.data);
         setImages(imagesRes.data.images);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching images:', error);
       }
-    };    
+    };
 
     // Fetch user profile from the backend
     const fetchProfile = async () => {
@@ -59,7 +57,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-    fetchData();
+    fetchImages();
   }, []);
 
   return (
