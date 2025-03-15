@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { ThemeContext } from '../Components/ThemeContext';
 import './home.css';
 
 const Home = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   useEffect(() => {
     const content = document.querySelector('.content');
     content.style.opacity = 0;
@@ -28,7 +31,7 @@ const Home = () => {
 
   return (
     <section className="home-section">
-      <div className="content">
+      <div className={`content ${darkMode ? 'dark-mode' : ''}`}>
         <h1>General Instructions</h1>
         <p>
           Simply upload a photo of yourself, along with an image of the clothing item

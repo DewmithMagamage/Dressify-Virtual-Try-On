@@ -105,6 +105,20 @@ body {
   background: transparent;
 }
 
+/*Dark Mode*/
+.profile-container.dark-mode {
+  background:rgba(34, 33, 33, 0.849); 
+}
+.outfit-history.dark-mode, 
+.user-history.dark-mode, 
+.user-details.dark-mode {
+  background-color:rgba(0, 0, 0, 0.904); 
+  color: white;
+}
+.profile-content h2.dark-mode {
+  color: white;
+}
+
 /* Responsive Adjustment */
 @media (max-width: 768px) {
   .profile-container {

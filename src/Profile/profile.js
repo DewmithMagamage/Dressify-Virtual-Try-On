@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { ThemeContext } from '../Components/ThemeContext';
 import SettingsPopup from './settingsPopup';
 import './profile.css';
 
 const ProfilePage = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -61,7 +64,7 @@ const ProfilePage = () => {
   }, []);
 
   return (
-    <div className="profile-container">
+    <div className={`profile-container ${darkMode ? 'dark-mode' : ''}`}>
       <button className="back-button" onClick={() => navigate("/home")}>
         <svg className="back-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="currentColor">
             <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
@@ -76,8 +79,8 @@ const ProfilePage = () => {
 
       <h1>Profile</h1>
       <div className="profile-content">
-        <div className="user-details">
-          <h2>User Details</h2>
+        <div className={`user-details ${darkMode ? 'dark-mode' : ''}`}>
+          <h2 className={darkMode ? 'dark-mode' : ''}>User Details</h2>
           {profile ? (
             <>
               <p><strong>User Name:</strong> {profile.fullName}</p>
@@ -88,16 +91,16 @@ const ProfilePage = () => {
           )}
         </div>
         <div className="user-history-outfit-history">
-          <div className="user-history">
-            <h2>User History</h2>
+          <div className={`user-history ${darkMode ? 'dark-mode' : ''}`}>
+          <h2 className={darkMode ? 'dark-mode' : ''}>User History</h2>
             {images.length > 0 ? (
               images[0]?.fileUrl && <img src={images[0]?.fileUrl} alt="User body front" />
             ) : (
               <p>Loading user history...</p>
             )}
           </div>
-          <div className="outfit-history">
-            <h2>Outfit History</h2>
+          <div className={`outfit-history ${darkMode ? 'dark-mode' : ''}`}>
+          <h2 className={darkMode ? 'dark-mode' : ''}>Outfit History</h2>
             {images.length > 1 ? (
               images[1]?.fileUrl && <img src={images[1]?.fileUrl} alt="Garment" />
             ) : (

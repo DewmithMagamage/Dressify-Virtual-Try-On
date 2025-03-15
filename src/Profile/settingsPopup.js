@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ThemeContext } from '../Components/ThemeContext'; 
 import './settingsPopup.css';
 
 const SettingsPopup = ({ isOpen, onClose }) => {
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  // Toggle dark mode and save preference in localStorage
+  const handleDarkModeToggle = () => {
+    toggleDarkMode(); // Toggle the dark mode state
+    localStorage.setItem('darkMode', !darkMode); // Save the new dark mode state in localStorage
+    document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -74,51 +83,56 @@ const SettingsPopup = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className={`settings-popup ${isOpen ? 'open' : ''}`}>
+    <div className={`settings-popup ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>
       <div className="settings-popup-content">
-        <button className="close-btn" onClick={onClose}>X</button>
-        <h2>Settings</h2>
+        <button className={`close-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={onClose}>X</button>
+        <h2 className={darkMode ? 'dark-mode' : ''}>Settings</h2>
 
         <div className="settings-section">
           <div className="header">
-            <img src="../IMAGES/preferance.png" alt="Preferences" className="icon"/>
-            <h3>Preferences</h3>
+            <img src="../IMAGES/preference.png" alt="Preferences" className="icon"/>
+            <h3 className={darkMode ? 'dark-mode' : ''}>Preferences</h3>
+            <img src="../IMAGES/preference-w.png" alt="Preferences" className="icon"/>
           </div>    
-          <button className="function-btn">Dark Mode</button>
-          <button className="function-btn">Language</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleDarkModeToggle}>Dark Mode</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Language</button>
         </div>
 
         <div className="settings-section">
           <div className="header">
             <img src="../IMAGES/notifications.png" alt="Notifications" className="icon"/>    
-            <h3>Notifications</h3>
+            <h3 className={darkMode ? 'dark-mode' : ''}>Notifications</h3>
+            <img src="../IMAGES/notifications-w.png" alt="Notifications" className="icon"/>    
           </div>    
-          <button className="function-btn">Updates</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Updates</button>
         </div>
 
         <div className="settings-section">
           <div className="header">
             <img src="../IMAGES/privacy.png" alt="Privacy and Security" className="icon"/>
-            <h3>Privacy and Security</h3>
+            <h3 className={darkMode ? 'dark-mode' : ''}>Privacy and Security</h3>
+            <img src="../IMAGES/privacy-w.png" alt="Privacy and Security" className="icon"/>
           </div>    
-          <button className="function-btn">Manage Security</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Manage Security</button>
         </div>
 
         <div className="settings-section">
           <div className="header">
             <img src="../IMAGES/help.png" alt="Help" className="icon"/>
-            <h3>Help</h3>
+            <h3 className={darkMode ? 'dark-mode' : ''}>Help</h3>
+            <img src="../IMAGES/help-w.png" alt="Help" className="icon"/>
           </div>    
-          <button className="function-btn">Contact support</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Contact support</button>
         </div>
 
         <div className="settings-section">
           <div className="header">
             <img src="../IMAGES/account.png" alt="Account" className="icon"/>
-            <h3>Account</h3>
+            <h3 className={darkMode ? 'dark-mode' : ''}>Account</h3>
+            <img src="../IMAGES/account-w.png" alt="Account" className="icon"/>
           </div>    
-          <button className="function-btn" onClick={handleDeleteAccountClick}>Delete Account</button>
-          <button className="function-btn" onClick={handleLogoutClick}>Log Out</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleDeleteAccountClick}>Delete Account</button>
+          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleLogoutClick}>Log Out</button>
         </div>
       </div>
 

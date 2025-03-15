@@ -260,6 +260,15 @@ body {
   }
 }
 
+/*Dark mode*/
+.frosted-container.dark-mode {
+  background:rgba(34, 33, 33, 0.849); 
+}
+
+.next-step-btn.dark-mode {
+  background-color:rgba(0, 0, 0, 0.904); 
+}
+
 /* Responsive Adjustments */
 @media (max-width: 767px) {
   .frosted-container {

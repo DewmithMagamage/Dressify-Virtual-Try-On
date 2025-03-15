@@ -8,7 +8,6 @@
 
 /* Home Section */
 .home-section {
-    /*background-image: url('../IMAGES/bg1.mp4') no-repeat center center fixed;*/
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -79,6 +78,24 @@
 
 .btn:active {
     transform: translateY(2px); 
+}
+
+/* Dark Mode Styles */
+.content.dark-mode {
+    background: rgba(34, 33, 33, 0.849); 
+}
+
+body.dark-mode .btn{
+    background-color:rgba(0, 0, 0, 0.904); 
+    color: white;
+}
+
+body.dark-mode .btn:hover {
+    background-color: rgb(187, 19, 117);
+}
+
+body.dark-mode .btn:active {
+    transform: translateY(2px);
 }
 
 /* Responsive Adjustment */

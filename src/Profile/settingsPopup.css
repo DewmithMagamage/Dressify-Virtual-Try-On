@@ -5,7 +5,6 @@
     width: 350px;
     height: 100%;
     background: #fff;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
     transition: right 0.3s ease;
     z-index: 1000;
     border-radius: 10px 0 0 10px;
@@ -13,6 +12,12 @@
   
   .settings-popup.open {
     right: 0;
+  }
+
+  .settings-popup h2{
+    color: black;
+    padding-top: 10%;
+    margin-bottom: 3px;
   }
   
   .settings-popup-content {
@@ -32,15 +37,9 @@
     color: #444;
   }
   
-  h2 {
-    text-align: center;
-    color: #222;
-    margin-bottom: 10px;
-  }
-  
   .settings-section {
     border-top: 1px solid #ddd;
-    padding-top: 10px;
+    padding-top: 5px;
   }
   
   .settings-section .header {
@@ -52,6 +51,7 @@
   .settings-section h3 {
     font-size: 16px;
     margin-left: 10px; 
+    margin-right: 10px; 
     color: #444;
   }
   
@@ -62,7 +62,7 @@
   
   .function-btn {
     display: block;
-    width: 100%;
+    width: 95%;
     padding: 12px;
     margin: 5px 0;
     border: none;
@@ -113,6 +113,31 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1100;
+  }
+
+  /*Dark mode*/
+  .settings-popup.dark-mode {
+    background-color:rgb(0, 0, 0); 
+  }
+  .settings-popup-content h2.dark-mode {
+    color: white;
+  }
+
+  .settings-section h3.dark-mode {
+    color: white;
+  }
+
+  .close-btn.dark-mode {
+    color: white;
+  }
+
+  .function-btn.dark-mode {
+    background-color:rgba(34, 33, 33, 0.849); 
+    color: white;
+  }
+
+  .function-btn:hover.dark-mode{
+    background-color: rgba(116, 113, 113, 0.781);
   }
 
   @media (max-width: 768px) {

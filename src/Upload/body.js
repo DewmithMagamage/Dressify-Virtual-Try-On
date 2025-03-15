@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from '../Components/ThemeContext';
 import "./body.css";
 
 const Body = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   const [uploadedImages, setUploadedImages] = useState([null]);
   const [errorMessage, setErrorMessage] = useState("");
   const [largeBoxIndex] = useState(0);
@@ -36,7 +39,7 @@ const Body = () => {
   };
 
   return (
-    <div className="frosted-container">
+    <div className={`frosted-container ${darkMode ? 'dark-mode' : ''}`}>
       <button className="back-button" onClick={() => navigate("/home")}>
         <svg className="back-arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="currentColor">
           <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
@@ -86,7 +89,7 @@ const Body = () => {
         <div className="instructions-container">
           <p className="body-text">Upload a clear front-facing photo to start!</p>
           <div className="button-container">
-            <button className="next-step-btn" onClick={handleNextStep}>Next</button>
+            <button className={`next-step-btn ${darkMode ? 'dark-mode' : ''}`} onClick={handleNextStep}>Next</button>
           </div>
         </div>
       </div>
