@@ -85,54 +85,69 @@ const SettingsPopup = ({ isOpen, onClose }) => {
   return (
     <div className={`settings-popup ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>
       <div className="settings-popup-content">
-        <button className={`close-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={onClose}>X</button>
+        <button className={`set-close-btn ${darkMode ? 'dark-mode' : ''}`} onClick={onClose}>X</button>
         <h2 className={darkMode ? 'dark-mode' : ''}>Settings</h2>
 
+        {/* Preferences Section */}
         <div className="settings-section">
-          <div className="header">
-            <img src="../IMAGES/preference.png" alt="Preferences" className="icon"/>
+          <div className="settings-header">
+            <img src="../IMAGES/preference.png" alt="Preferences" className="icon" style={{display: !darkMode ? 'block' : 'none'}}/>
+            <img src="../IMAGES/preference-w.png" alt="Preferences" className="icon" style={{display: darkMode ? 'block' : 'none'}}/>
             <h3 className={darkMode ? 'dark-mode' : ''}>Preferences</h3>
-            <img src="../IMAGES/preference-w.png" alt="Preferences" className="icon"/>
-          </div>    
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleDarkModeToggle}>Dark Mode</button>
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Language</button>
+          </div>  
+          <div className="section-buttons">
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`} onClick={handleDarkModeToggle}>Dark Mode</button>
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`}>Language</button>
+          </div>
         </div>
 
+        {/* Notifications Section */}
         <div className="settings-section">
-          <div className="header">
-            <img src="../IMAGES/notifications.png" alt="Notifications" className="icon"/>    
-            <h3 className={darkMode ? 'dark-mode' : ''}>Notifications</h3>
-            <img src="../IMAGES/notifications-w.png" alt="Notifications" className="icon"/>    
-          </div>    
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Updates</button>
+          <div className="settings-header">
+            <img src="../IMAGES/notifications.png" alt="Notifications" className="icon" style={{display: !darkMode ? 'block' : 'none'}}/> 
+            <img src="../IMAGES/notifications-w.png" alt="Notifications" className="icon" style={{display: darkMode ? 'block' : 'none'}}/>   
+            <h3 className={darkMode ? 'dark-mode' : ''}>Notifications</h3>    
+          </div>
+          <div className="section-buttons">
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`}>Updates</button>
+          </div>
         </div>
 
+        {/* Privacy and Security Section */}
         <div className="settings-section">
-          <div className="header">
-            <img src="../IMAGES/privacy.png" alt="Privacy and Security" className="icon"/>
+          <div className="settings-header">
+            <img src="../IMAGES/privacy.png" alt="Privacy and Security" className="icon" style={{display: !darkMode ? 'block' : 'none'}}/>
+            <img src="../IMAGES/privacy-w.png" alt="Privacy and Security" className="icon" style={{display: darkMode ? 'block' : 'none'}}/>
             <h3 className={darkMode ? 'dark-mode' : ''}>Privacy and Security</h3>
-            <img src="../IMAGES/privacy-w.png" alt="Privacy and Security" className="icon"/>
-          </div>    
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Manage Security</button>
+          </div>
+          <div className="section-buttons">
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`}>Manage Security</button>
+          </div>
         </div>
 
+        {/* Help Section */}
         <div className="settings-section">
-          <div className="header">
-            <img src="../IMAGES/help.png" alt="Help" className="icon"/>
+          <div className="settings-header">
+            <img src="../IMAGES/help.png" alt="Help" className="icon" style={{display: !darkMode ? 'block' : 'none'}}/>
+            <img src="../IMAGES/help-w.png" alt="Help" className="icon" style={{display: darkMode ? 'block' : 'none'}}/>
             <h3 className={darkMode ? 'dark-mode' : ''}>Help</h3>
-            <img src="../IMAGES/help-w.png" alt="Help" className="icon"/>
-          </div>    
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`}>Contact support</button>
+          </div>
+          <div className="section-buttons">
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`}>Contact support</button>
+          </div>
         </div>
 
+        {/* Account Section */}
         <div className="settings-section">
-          <div className="header">
-            <img src="../IMAGES/account.png" alt="Account" className="icon"/>
+          <div className="settings-header">
+            <img src="../IMAGES/account.png" alt="Account" className="icon" style={{display: !darkMode ? 'block' : 'none'}}/>
+            <img src="../IMAGES/account-w.png" alt="Account" className="icon" style={{display: darkMode ? 'block' : 'none'}}/>
             <h3 className={darkMode ? 'dark-mode' : ''}>Account</h3>
-            <img src="../IMAGES/account-w.png" alt="Account" className="icon"/>
-          </div>    
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleDeleteAccountClick}>Delete Account</button>
-          <button className={`function-btn ${isOpen ? 'open' : ''} ${darkMode ? 'dark-mode' : ''}`} onClick={handleLogoutClick}>Log Out</button>
+          </div>
+          <div className="section-buttons">
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`} onClick={handleDeleteAccountClick}>Delete Account</button>
+            <button className={`function-btn ${darkMode ? 'dark-mode' : ''}`} onClick={handleLogoutClick}>Log Out</button>
+          </div>
         </div>
       </div>
 

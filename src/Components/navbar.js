@@ -6,17 +6,20 @@ import './navbar.css';
 
 const Navbar = () => {
   const location = useLocation();
-  const navigate = useNavigate();  
 
   if (location.pathname === "/login" || location.pathname === "/") {
     return null;
   }
 
+  const isShopPage = location.pathname === "/shop";
+
   return (
     <nav className="navbar">
-      <Link to="/home">
-        <img src="/IMAGES/logowhite.png" alt="Logo" className="logo" />
-      </Link>
+      {!isShopPage && (
+        <Link to="/home">
+          <img src="/IMAGES/logowhite.png" alt="Logo" className="logo" />
+        </Link>
+      )}
      
       <div className="nav-icons">
         <NavLink to="/home" exacct className={location.pathname === "/" ? "active home-btn" : "home-btn"}>

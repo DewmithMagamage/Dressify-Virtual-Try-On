@@ -94,7 +94,7 @@ const ProfilePage = () => {
           <div className={`user-history ${darkMode ? 'dark-mode' : ''}`}>
           <h2 className={darkMode ? 'dark-mode' : ''}>User History</h2>
             {images.length > 0 ? (
-              images[0]?.fileUrl && <img src={images[0]?.fileUrl} alt="User body front" />
+              images[0]?.fileUrl && <img className="history-img" src={images[0]?.fileUrl} alt="User body front" />
             ) : (
               <p>Loading user history...</p>
             )}
@@ -102,7 +102,7 @@ const ProfilePage = () => {
           <div className={`outfit-history ${darkMode ? 'dark-mode' : ''}`}>
           <h2 className={darkMode ? 'dark-mode' : ''}>Outfit History</h2>
             {images.length > 1 ? (
-              images[1]?.fileUrl && <img src={images[1]?.fileUrl} alt="Garment" />
+              images[1]?.fileUrl && <img className="history-img" src={images[1]?.fileUrl} alt="Garment" />
             ) : (
               <p>Loading outfit history...</p>
             )}

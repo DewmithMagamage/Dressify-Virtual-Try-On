@@ -30,7 +30,7 @@ body {
   max-width: 900px;
   padding: 20px;
   position: relative;
-  height: 70vh;
+  height: auto;
   flex-direction: column;
 }
 
@@ -80,6 +80,12 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   height: 100%;
+}
+
+.profile-content .history-img {
+  width: 80px;
+  height: 100px;
+  display: block;
 }
 
 /* Settings button */

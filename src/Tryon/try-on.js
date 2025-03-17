@@ -31,8 +31,21 @@ const TryOn = () => {
     formData.append('garment', dataURLtoFile(garmentImage, 'garment.png'));
 
     try {
+      // Get the authentication token from localStorage
+      const authToken = localStorage.getItem('authToken'); // or however you store it
+      
+      if (!authToken) {
+        setError('Authentication token not found. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      // Include the token in the request headers
       const response = await axios.post('http://localhost:5000/api/tryon', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}` // Add the token with Bearer prefix
+        },
       });
 
       if (response.data.success) {
@@ -53,6 +66,8 @@ const TryOn = () => {
       console.error("API error:", err);
       if (err.response && err.response.data && err.response.data.error) {
         setError(`Server error: ${err.response.data.error}`);
+      } else if (err.response && err.response.status === 401) {
+        setError('Authentication failed. Please log in again.');
       } else {
         setError('Failed to connect to the server.');
       }
@@ -61,18 +76,7 @@ const TryOn = () => {
     }
   };
 
-  const dataURLtoFile = (dataUrl, filename) => {
-    const arr = dataUrl.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  };
-
+  // Similarly, update the handleGenerate3D function
   const handleGenerate3D = async () => {
     if (!generatedImage) {
       setError('No image available to generate 3D model from.');
@@ -85,13 +89,26 @@ const TryOn = () => {
     setVideo3D(null);
 
     try {
-      // Send the image URL or data
+      // Get the authentication token
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        setError('Authentication token not found. Please log in again.');
+        setGenerating3D(false);
+        return;
+      }
+
+      // Send the image URL or data with authentication token
       const imageUrlToSend = generatedImage.startsWith('data:image') 
         ? generatedImage  // If it's already base64, send it as is
         : generatedImage; // If it's a URL, send the URL
         
       const response = await axios.post('http://localhost:5000/api/generate3d', {
         imageUrl: imageUrlToSend
+      }, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
       });
 
       if (response.data.success && response.data.modelData) {
@@ -113,12 +130,26 @@ const TryOn = () => {
       
       if (err.response && err.response.data && err.response.data.error) {
         setError(`Server error: ${err.response.data.error}`);
+      } else if (err.response && err.response.status === 401) {
+        setError('Authentication failed. Please log in again.');
       } else {
         setError('Failed to connect to the server for 3D generation.');
       }
     } finally {
       setGenerating3D(false);
     }
+  };
+
+  const dataURLtoFile = (dataUrl, filename) => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
   };
 
   return (
@@ -155,7 +186,7 @@ const TryOn = () => {
           </div>
         )}
 
-{model3D && (
+        {model3D && (
           <div className="model-container">
             <h2 className="checkout-text">3D Model View</h2>
             <div className="model-display">

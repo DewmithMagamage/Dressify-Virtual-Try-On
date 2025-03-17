@@ -1,65 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from "react-router-dom";
+import React from 'react';
 import './cart.css';
 
-const Cart = ({ cart, isOpen, onClose }) => {
-  const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
+const Cart = ({ isOpen, onClose, cartItems, removeFromCart, updateQuantity, clearCart }) => {
+  if (!isOpen) return null;
 
-  useEffect(() => {
-    if (Array.isArray(cart)) {
-      setCartItems(cart);
-    }
-  }, [cart]);
-
-  const increaseQuantity = (productName) => {
-    setCartItems(cartItems.map(item => 
-      item.name === productName ? { ...item, quantity: item.quantity + 1 } : item
-    ));
-  };
-
-  const decreaseQuantity = (productName) => {
-    setCartItems(cartItems.map(item => 
-      item.name === productName && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-    ));
-  };
-
-  const removeFromCart = (productName) => {
-    setCartItems(cartItems.filter(item => item.name !== productName));
-  };
-
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+  // Calculate cart summary
+  const subtotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity), 0);
+  const delivery = subtotal > 0 ? 200 : 0;
+  const total = subtotal + delivery;
 
   return (
-    <div className={`cart-container ${isOpen ? 'open' : ''}`}>
-      <div className="cart-items">
-        <button className="close-btn" onClick={onClose}>X</button>
-        <h2 className="heading1">Your Cart</h2>
-      
-        {cartItems.length > 0 ? (
-          cartItems.map((item, index) => (
-            <div key={index} className="cart-item">
-              <p className="product-name">{item.name}</p>
-              <p className="product-price">${item.price.toFixed(2)}</p>
-              <div className="quantity-controls">
-                <button onClick={() => increaseQuantity(item.name)}>+</button>
-                <span>{item.quantity}</span>
-                <button onClick={() => decreaseQuantity(item.name)}>-</button>
+    <div className="cart-overlay">
+      <div className="cart-container">
+        <div className="cart-header">
+          <h2>Shopping Cart ({cartItems.length} items)</h2>
+          <button className="cart-close-btn" onClick={onClose}>X</button>
+        </div>
+
+        <div className="cart-content">
+          {cartItems.length === 0 ? (
+            <div className="empty-message">Your cart is empty</div>
+          ) : (
+            <>
+              {cartItems.map(item => (
+                <div key={item.id} className="cart-item">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="cart-item-image" 
+                  />
+                  <div className="cart-item-details">
+                    <h3 className="cart-item-title">{item.title}</h3>
+                    <p className="cart-item-price">{item.price}</p>
+                    <div className="cart-item-actions">
+                      <div className="cart-item-quantity">
+                        <button 
+                          className="cart-quantity-btn"
+                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="text" 
+                          className="cart-quantity-input" 
+                          value={item.quantity}
+                          readOnly
+                        />
+                        <button 
+                          className="cart-quantity-btn"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span 
+                        className="cart-item-remove"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        Remove
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="cart-summary">
+                <p>
+                  <span>Subtotal:</span>
+                  <span>Rs {subtotal.toFixed(2)}</span>
+                </p>
+                <p>
+                  <span>Delivery:</span>
+                  <span>Rs {delivery.toFixed(2)}</span>
+                </p>
+                <p style={{ fontWeight: 'bold' }}>
+                  <span>Total:</span>
+                  <span>Rs {total.toFixed(2)}</span>
+                </p>
               </div>
-              <button className="remove-btn" onClick={() => removeFromCart(item.name)}>
-                <svg className="delete-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
-                  <path d="M8 26c0 1.656 1.343 3 3 3h10c1.656 0 3-1.344 3-3l2-16h-20l2 16zM19 13h2v13h-2v-13zM15 13h2v13h-2v-13zM11 13h2v13h-2v-13zM25.5 6h-6.5c0 0-0.448-2-1-2h-4c-0.553 0-1 2-1 2h-6.5c-0.829 0-1.5 0.671-1.5 1.5s0 1.5 0 1.5h22c0 0 0-0.671 0-1.5s-0.672-1.5-1.5-1.5z" />
-                </svg>
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>Your cart is empty.</p>
-        )}
-      </div>
-      <div className="cart-summary">
-        <p>Total: ${total}</p>
-        <button className="checkout-btn">Checkout</button>
+
+              <div className="cart-actions">
+                <button className="btn-continue" onClick={onClose}>
+                  Continue Shopping
+                </button>
+                <button className="btn-checkout" onClick={() => alert('Proceeding to checkout...')}>
+                  Checkout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
