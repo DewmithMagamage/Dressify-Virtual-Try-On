@@ -1,26 +1,28 @@
-import { SignUpForm } from "./components/SignUpForm.jsx"
-import "./App.css"
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoadingFlashScreen from "./pages/loading-flash-screen";
+import CreateAccount from "./pages/signup_page";
+import LoginPage from "./pages/login";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return <LoadingFlashScreen onComplete={handleLoadingComplete} />;
+  }
+
   return (
-    <main className="app">
-      <img
-        src="background.jpg"
-        alt="Modern bedroom interior"
-        className="background-image"
-      />
-      <div className="content">
-        <div className="header">
-          <img src="/placeholder.svg" alt="Dressly Logo" className="logo" />
-          <select className="language-select" defaultValue="en-US">
-            <option value="en-US">English (US)</option>
-          </select>
-        </div>
-        <SignUpForm />
-      </div>
-    </main>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<CreateAccount />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
-
+export default App;
