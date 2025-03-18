@@ -39,6 +39,11 @@
     cursor: pointer;
     color: #777;
   }
+
+  .wishlist-close-btn:hover {
+    color:  rgb(236, 119, 164);
+    font-weight: bold;
+  }
   
   .wishlist-content {
     flex: 1;

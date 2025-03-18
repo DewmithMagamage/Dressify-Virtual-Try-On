@@ -68,7 +68,7 @@ const Signup = () => {
         <form onSubmit={handleSubmit}>
           <div className="social-login">
             <button type="button" className="google-btn" onClick={handleGoogleLogin}>
-              <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Log in with Google
+              <img src="/IMAGES/google.png" alt="Google" className="social-icon" />Sign Up with Google
             </button>
           </div>
           <p className="or-divider">- OR -</p>

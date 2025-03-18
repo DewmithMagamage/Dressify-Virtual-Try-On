@@ -94,7 +94,7 @@ body {
 
 /* Error message */
 .error-message {
-  color: #dc3545;
+  color:white;
   text-align: center;
   padding: 10px;
   margin: 10px 0;
@@ -111,7 +111,7 @@ body {
 }
 
 .next-step-btn {
-  background-color:  rgb(238, 66, 132);
+  background-color: rgb(238, 66, 132);
   color: white;
 }
 
@@ -190,7 +190,6 @@ body {
   background-color: #222;
 }
 
-/* Responsive adjustments */
 /* Responsive Adjustments */
 @media (max-width: 767px) {
   .frosted-container {

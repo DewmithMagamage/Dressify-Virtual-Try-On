@@ -9,7 +9,7 @@ const Wishlist = ({ isOpen, onClose, wishlistItems, removeFromWishlist, addToCar
       <div className="wishlist-container">
         <div className="wishlist-header">
           <h2>My Wishlist ({wishlistItems.length} items)</h2>
-          <button className="wishlist-close-btn" onClick={onClose}>×</button>
+          <button className="wishlist-close-btn" onClick={onClose}>X</button>
         </div>
 
         <div className="wishlist-content">
@@ -47,19 +47,6 @@ const Wishlist = ({ isOpen, onClose, wishlistItems, removeFromWishlist, addToCar
                   </div>
                 </div>
               ))}
-
-              <div className="wishlist-actions">
-                <button 
-                  className="btn-add-all-to-cart"
-                  onClick={() => {
-                    wishlistItems.forEach(item => addToCart(item));
-                    // Clear wishlist after adding all to cart
-                    wishlistItems.forEach(item => removeFromWishlist(item.id));
-                  }}
-                >
-                  Add All to Cart
-                </button>
-              </div>
             </>
           )}
         </div>

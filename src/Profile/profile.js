@@ -5,13 +5,48 @@ import { ThemeContext } from '../Components/ThemeContext';
 import SettingsPopup from './settingsPopup';
 import './profile.css';
 
+// Image Modal Component
+const ImageModal = ({ image, isOpen, onClose }) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+        <img src={image} alt="Enlarged view" className="modal-image" />
+      </div>
+    </div>
+  );
+};
+
 const ProfilePage = () => {
   const { darkMode } = useContext(ThemeContext);
-
   const navigate = useNavigate();
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState({
+    front: [],
+    generated: [],
+    garment: []
+  });
   const [profile, setProfile] = useState(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  // State for image modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  
+  // State for profile editing
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    fullName: '',
+    email: ''
+  });
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
   const handleSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -20,30 +55,112 @@ const ProfilePage = () => {
   const handleCloseSettings = () => {
     setIsSettingsOpen(false);
   };
+  
+  // Handler for opening the image modal
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setModalOpen(true);
+  };
+  
+  // Handler for closing the image modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedImage(null);
+  };
+
+  // Handler for toggling edit mode
+  const toggleEditMode = () => {
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setEditFormData({
+        fullName: profile?.fullName || '',
+        email: profile?.email || ''
+      });
+      setIsEditing(true);
+    }
+    // Clear any previous errors
+    setUpdateError(null);
+  };
+
+  // Handler for form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    });
+  };
+
+  // Handler for submitting profile updates
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setUpdateLoading(true);
+    setUpdateError(null);
+    
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      setUpdateError('Authentication token not found. Please log in again.');
+      setUpdateLoading(false);
+      return;
+    }
+    
+    try {
+      const response = await axios.put(
+        'http://localhost:5000/api/profile/update', 
+        editFormData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Update the profile state with the new data
+      setProfile(response.data);
+      setIsEditing(false);
+      setUpdateLoading(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setUpdateError(
+        error.response?.data?.message || 
+        'Failed to update profile. Please try again.'
+      );
+      setUpdateLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Fetch images from the backend
     const fetchImages = async () => {
+      setLoading(true);
       const token = localStorage.getItem('authToken');
       if (!token) {
         console.error('No token found');
+        setLoading(false);
         return;
       }
   
       try {
-        const [imagesRes] = await Promise.all([ 
-          axios.get('http://localhost:5000/api/images', { headers: { Authorization: `Bearer ${token}` } })
-        ]);
+        const response = await axios.get('http://localhost:5000/api/images', { 
+          headers: { Authorization: `Bearer ${token}` } 
+        });
   
-        setImages(imagesRes.data.images);
+        // Organize images by type
+        const allImages = response.data.images || [];
+        const imagesByType = {
+          front: allImages.filter(img => img.type === 'front'),
+          generated: allImages.filter(img => img.type === 'generated'),
+          garment: allImages.filter(img => img.type === 'garment')
+        };
+        
+        setImages(imagesByType);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching images:', error);
+        setLoading(false);
       }
     };
 
     // Fetch user profile from the backend
     const fetchProfile = async () => {
-      const token = localStorage.getItem('authToken'); // Get token from local storage
+      const token = localStorage.getItem('authToken');
       if (!token) {
         console.error('No token found');
         return;
@@ -80,38 +197,123 @@ const ProfilePage = () => {
       <h1>Profile</h1>
       <div className="profile-content">
         <div className={`user-details ${darkMode ? 'dark-mode' : ''}`}>
-          <h2 className={darkMode ? 'dark-mode' : ''}>User Details</h2>
+          <div className="user-details-header">
+            <h2 className={darkMode ? 'dark-mode' : ''}>User Details</h2>
+            <button 
+              className={`edit-btn ${isEditing ? 'cancel-edit' : ''}`}
+              onClick={toggleEditMode}
+            >
+              {isEditing ? 'X' : <img src="../IMAGES/edit.png" alt="Edit" />}
+            </button>
+          </div>
+          
           {profile ? (
-            <>
-              <p><strong>User Name:</strong> {profile.fullName}</p>
-              <p><strong>Email:</strong> {profile.email}</p>
-            </>
+            isEditing ? (
+              <form className="edit-profile-form" onSubmit={handleProfileUpdate}>
+                <div className="form-group">
+                  <label htmlFor="fullName">Full Name</label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={editFormData.fullName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={editFormData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                {updateError && <p className="update-error">{updateError}</p>}
+
+                <div className="form-actions">
+                  <button 
+                    type="submit" 
+                    className="save-edits-btn"
+                    disabled={updateLoading}
+                  >
+                    {updateLoading ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <p><strong>User Name:</strong> {profile.fullName}</p>
+                <p><strong>Email:</strong> {profile.email}</p>
+              </>
+            )
           ) : (
             <p>Loading user details...</p>
           )}
         </div>
-        <div className="user-history-outfit-history">
-          <div className={`user-history ${darkMode ? 'dark-mode' : ''}`}>
-          <h2 className={darkMode ? 'dark-mode' : ''}>User History</h2>
-            {images.length > 0 ? (
-              images[0]?.fileUrl && <img className="history-img" src={images[0]?.fileUrl} alt="User body front" />
-            ) : (
-              <p>Loading user history...</p>
-            )}
+
+        {loading ? (
+          <p>Loading your images...</p>
+        ) : (
+          <div className="images-history-container">
+            <div className={`generated-images-section ${darkMode ? 'dark-mode' : ''}`}>
+              <h2 className={darkMode ? 'dark-mode' : ''}>Generated Outfits</h2>
+              <div className="images-scroll-container">
+                {images.generated.length > 0 ? (
+                  images.generated.map((img, index) => (
+                    <div key={`gen-${index}`} className="image-card">
+                      <img 
+                        src={img.fileUrl} 
+                        alt={`Generated outfit ${index + 1}`} 
+                        className="history-img" 
+                        onClick={() => handleImageClick(img.fileUrl)}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p>No generated outfits yet.</p>
+                )}
+              </div>
+            </div>
+            
+            <div className={`front-images-section ${darkMode ? 'dark-mode' : ''}`}>
+              <h2 className={darkMode ? 'dark-mode' : ''}>Your Photos</h2>
+              <div className="images-scroll-container">
+                {images.front.length > 0 ? (
+                  images.front.map((img, index) => (
+                    <div key={`front-${index}`} className="image-card">
+                      <img 
+                        src={img.fileUrl} 
+                        alt={`User photo ${index + 1}`} 
+                        className="history-img" 
+                        onClick={() => handleImageClick(img.fileUrl)}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p>No photos uploaded yet.</p>
+                )}
+              </div>
+            </div>
           </div>
-          <div className={`outfit-history ${darkMode ? 'dark-mode' : ''}`}>
-          <h2 className={darkMode ? 'dark-mode' : ''}>Outfit History</h2>
-            {images.length > 1 ? (
-              images[1]?.fileUrl && <img className="history-img" src={images[1]?.fileUrl} alt="Garment" />
-            ) : (
-              <p>Loading outfit history...</p>
-            )}
-          </div>
-        </div>
+        )}
       </div>
+      
       <SettingsPopup
         isOpen={isSettingsOpen}
         onClose={handleCloseSettings}
+      />
+      
+      {/* Image Modal */}
+      <ImageModal 
+        image={selectedImage}
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
       />
     </div>
   );

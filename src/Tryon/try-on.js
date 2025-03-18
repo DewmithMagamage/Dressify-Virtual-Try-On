@@ -12,6 +12,7 @@ const TryOn = () => {
   const [model3D, setModel3D] = useState(null);
   const [video3D, setVideo3D] = useState(null);
   const [generating3D, setGenerating3D] = useState(false);
+  const [view, setView] = useState('2D'); // New state to track which view is active
 
   useEffect(() => {
     if (frontImage && garmentImage) {
@@ -25,6 +26,7 @@ const TryOn = () => {
     setGeneratedImage(null);
     setModel3D(null);
     setVideo3D(null);
+    setView('2D');
 
     const formData = new FormData();
     formData.append('front', dataURLtoFile(frontImage, 'front.png'));
@@ -76,7 +78,7 @@ const TryOn = () => {
     }
   };
 
-  // Similarly, update the handleGenerate3D function
+  // Updated to switch to 3D view when generating
   const handleGenerate3D = async () => {
     if (!generatedImage) {
       setError('No image available to generate 3D model from.');
@@ -85,9 +87,7 @@ const TryOn = () => {
 
     setGenerating3D(true);
     setError('');
-    setModel3D(null);
-    setVideo3D(null);
-
+    
     try {
       // Get the authentication token
       const authToken = localStorage.getItem('authToken');
@@ -122,6 +122,9 @@ const TryOn = () => {
           setVideo3D(response.data.modelData.video);
           console.log("Received video URL:", response.data.modelData.video);
         }
+        
+        // Switch to 3D view after successful generation
+        setView('3D');
       } else {
         setError('Failed to generate 3D model: ' + (response.data.error || 'No error message provided'));
       }
@@ -138,6 +141,10 @@ const TryOn = () => {
     } finally {
       setGenerating3D(false);
     }
+  };
+
+  const switchToTwoDView = () => {
+    setView('2D');
   };
 
   const dataURLtoFile = (dataUrl, filename) => {
@@ -163,7 +170,8 @@ const TryOn = () => {
 
         {error && <p className="error-message">{error}</p>}
 
-        {generatedImage && (
+        {/* Show 2D view only when view state is '2D' */}
+        {generatedImage && view === '2D' && (
           <div className="result-container">
             <h2 className="checkout-text">Checkout the fit </h2>
             <div className="result-box">
@@ -186,7 +194,8 @@ const TryOn = () => {
           </div>
         )}
 
-        {model3D && (
+        {/* Show 3D view only when view state is '3D' */}
+        {model3D && view === '3D' && (
           <div className="model-container">
             <h2 className="checkout-text">3D Model View</h2>
             <div className="model-display">
@@ -215,14 +224,12 @@ const TryOn = () => {
                   crossOrigin="anonymous"
                   onError={(event) => console.error("Model viewer error:", event.detail)}
                   alt="3D model of clothing"
-              ></model-viewer>
+                ></model-viewer>
               </div>
             </div>
             <button 
-              className="back-btn" onClick={() => {
-                setModel3D(null);
-                setVideo3D(null);
-              }}
+              className="back-btn" 
+              onClick={switchToTwoDView}
             >
               Back to 2D View
             </button>
