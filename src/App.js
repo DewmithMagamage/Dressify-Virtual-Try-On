@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from './Home/home';
@@ -14,28 +14,33 @@ import Login from './Signup&login/login';
 import PrivateRoute from './Components/PrivateRoute';
 import AuthHandler from './Auth/AuthHandler';
 import ThemeProvider from './Components/ThemeContext';
+import LoadingFlashScreen from './SplashScreen/FlashScreen';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <ThemeProvider>
-      <Router>
-        <div className="App">
-          <Navbar /> 
-          <Routes>
-            <Route path="/" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<PrivateRoute element={Home} />} />
-            <Route path="/profile" element={<PrivateRoute element={Profile} />} />
-            <Route path="/shop" element={<PrivateRoute element={Shop} />} />
-            <Route path="/cart" element={<PrivateRoute element={Cart} />} />
-            <Route path="/body" element={<PrivateRoute element={Body} />} />
-            <Route path="/clothes" element={<PrivateRoute element={Clothes} />} />
-            <Route path="/try-on" element={<PrivateRoute element={TryOn} />} /> 
-            <Route path="/auth/callback" element={<AuthHandler />} />
-          </Routes>
-        </div>
-      </Router>
+      {isLoading && <LoadingFlashScreen onComplete={() => setIsLoading(false)} />}
+      {!isLoading && (
+        <Router>
+          <div className="App">
+            <Navbar /> 
+            <Routes>
+              <Route path="/" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/home" element={<PrivateRoute element={Home} />} />
+              <Route path="/profile" element={<PrivateRoute element={Profile} />} />
+              <Route path="/shop" element={<PrivateRoute element={Shop} />} />
+              <Route path="/cart" element={<PrivateRoute element={Cart} />} />
+              <Route path="/body" element={<PrivateRoute element={Body} />} />
+              <Route path="/clothes" element={<PrivateRoute element={Clothes} />} />
+              <Route path="/try-on" element={<PrivateRoute element={TryOn} />} /> 
+              <Route path="/auth/callback" element={<AuthHandler />} />
+            </Routes>
+          </div>
+        </Router>
+      )}
     </ThemeProvider>  
   );
 }

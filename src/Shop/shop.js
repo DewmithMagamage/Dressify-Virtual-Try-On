@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import './shop.css';
 import Cart from './cart';
@@ -12,31 +12,42 @@ const Shop = () => {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sample product data
-  const products = [
-    { id: 1, title: 'Blue t-shirt', price: 'Rs 1,000.00', image: '../IMAGES/product1.jfif' },
-    { id: 2, title: 'White tank top', price: 'Rs 1,500.00', image: '../IMAGES/product2.jpg' },
-    { id: 3, title: 'Green long sleeve top', price: 'Rs 1,990.00', image: '../IMAGES/product3.jpg' },
-    { id: 4, title: 'Pink Blouse', price: 'Rs 2,990.00', image: '../IMAGES/product4.jpeg' },
-    { id: 5, title: 'Black jacket top', price: 'Rs 3,990.00', image: '../IMAGES/product5.jpg' },
-    { id: 6, title: 'Blue collared t-shirt', price: 'Rs 2,000.00', image: '../IMAGES/product6.jpg' },
-    { id: 7, title: 'Red halter top', price: 'Rs 1,790.00', image: '../IMAGES/product7.jfif' },
-    { id: 8, title: 'Sage green Shirt', price: 'Rs 3,590.00', image: '../IMAGES/product8.jfif' }
-  ];
+  // Fetch products from the API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Cart functions
   const handleAddToCart = (product) => {
-    const existingItem = cartItems.find(item => item.id === product.id);
+    const existingItem = cartItems.find(item => item.id === product._id);
     
     if (existingItem) {
       // If item already exists in cart, increase quantity
       setCartItems(cartItems.map(item => 
-        item.id === product.id ? {...item, quantity: item.quantity + 1} : item
+        item.id === product._id ? {...item, quantity: item.quantity + 1} : item
       ));
     } else {
       // Add new item to cart with quantity 1
-      setCartItems([...cartItems, {...product, quantity: 1}]);
+      setCartItems([...cartItems, {...product, id: product._id, quantity: 1}]);
     }
   };
 
@@ -52,14 +63,14 @@ const Shop = () => {
 
   // Wishlist functions
   const handleWishlistToggle = (product) => {
-    const isInWishlist = wishlistItems.some(item => item.id === product.id);
+    const isInWishlist = wishlistItems.some(item => item.id === product._id);
     
     if (isInWishlist) {
       // Remove from wishlist
-      setWishlistItems(wishlistItems.filter(item => item.id !== product.id));
+      setWishlistItems(wishlistItems.filter(item => item.id !== product._id));
     } else {
       // Add to wishlist
-      setWishlistItems([...wishlistItems, product]);
+      setWishlistItems([...wishlistItems, {...product, id: product._id}]);
     }
   };
 
@@ -67,10 +78,14 @@ const Shop = () => {
     setWishlistItems(wishlistItems.filter(item => item.id !== productId));
   };
 
-  // Navigation
-  const handleTryNow = (product) => {
-    navigate("/body");
-  };
+  // Try now fucntion
+const handleTryNow = (product) => {
+  navigate("/body", { 
+    state: { 
+      selectedProduct: product 
+    }
+  });
+};
 
   return (
     <div className="shop">
@@ -114,33 +129,40 @@ const Shop = () => {
       <main>
         <div className="product-container">
           <h2>New Arrivals</h2>
-          <div className="products">
-            {products.map(product => (
-              <div key={product.id} className="product-card">
-                <div className="product-image">
-                  <img src={product.image} alt={product.title} />
-                </div>
-                <button 
-                  className={`wishlist-btn ${wishlistItems.some(item => item.id === product.id) ? 'active' : ''}`} 
-                  onClick={() => handleWishlistToggle(product)}
-                >
-                  <img 
-                    src={wishlistItems.some(item => item.id === product.id) ? '../IMAGES/heart-f.png' : '../IMAGES/heart-o.png'} 
-                    alt="Wishlist"
-                  />
-                </button>
+          
+          {isLoading ? (
+            <div className="loading">Loading products...</div>
+          ) : error ? (
+            <div className="error">Error: {error}</div>
+          ) : (
+            <div className="products">
+              {products.map(product => (
+                <div key={product._id} className="product-card">
+                  <div className="product-image">
+                    <img src={product.image} alt={product.title} />
+                  </div>
+                  <button 
+                    className={`wishlist-btn ${wishlistItems.some(item => item.id === product._id) ? 'active' : ''}`} 
+                    onClick={() => handleWishlistToggle(product)}
+                  >
+                    <img 
+                      src={wishlistItems.some(item => item.id === product._id) ? '../IMAGES/heart-f.png' : '../IMAGES/heart-o.png'} 
+                      alt="Wishlist"
+                    />
+                  </button>
 
-                <div className="product-actions">
-                  <button className="shop-try-on-btn" onClick={() => handleTryNow(product)}>Try Now</button>
-                  <button className="shop-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+                  <div className="product-actions">
+                    <button className="shop-try-on-btn" onClick={() => handleTryNow(product)}>Try Now</button>
+                    <button className="shop-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+                  </div>
+                  <div className="product-info">
+                    <h3>{product.title}</h3>
+                    <p>{product.price}</p>
+                  </div>
                 </div>
-                <div className="product-info">
-                  <h3>{product.title}</h3>
-                  <p>{product.price}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
 

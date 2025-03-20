@@ -110,7 +110,7 @@ body {
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.next-step-btn {
+.next-step-btn, .back-btn {
   background-color: rgb(238, 66, 132);
   color: white;
 }
@@ -126,13 +126,8 @@ body {
   cursor: not-allowed;
 }
 
-.back-btn {
-  background-color: #444;
-  color: white;
-}
-
 .back-btn:hover {
-  background-color: #333;
+  background-color: rgb(187, 19, 117);
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }

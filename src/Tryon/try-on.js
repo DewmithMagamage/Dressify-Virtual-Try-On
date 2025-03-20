@@ -16,7 +16,12 @@ const TryOn = () => {
 
   useEffect(() => {
     if (frontImage && garmentImage) {
+      console.log("Front image type:", typeof frontImage);
+      console.log("Garment image type:", typeof garmentImage);
+      console.log("Garment image starts with:", typeof garmentImage === 'string' ? garmentImage.substring(0, 30) : "Not a string");
       handleTryOn();
+    } else {
+      setError("Missing required images for try-on. Please go back and select both a front image and a garment.");
     }
   }, [frontImage, garmentImage]);
 
@@ -28,10 +33,6 @@ const TryOn = () => {
     setVideo3D(null);
     setView('2D');
 
-    const formData = new FormData();
-    formData.append('front', dataURLtoFile(frontImage, 'front.png'));
-    formData.append('garment', dataURLtoFile(garmentImage, 'garment.png'));
-
     try {
       // Get the authentication token from localStorage
       const authToken = localStorage.getItem('authToken'); // or however you store it
@@ -41,6 +42,36 @@ const TryOn = () => {
         setLoading(false);
         return;
       }
+
+      const formData = new FormData();
+      // Process the front image
+      const frontImageFile = dataURLtoFile(frontImage, 'front.png');
+      formData.append('front', frontImageFile);
+
+      //process the garment image
+      let garmentImageFile;
+
+      // Check if garmentImage is already a data URL or needs conversion
+      if (typeof garmentImage === 'string') {
+        // Ensure it's a proper data URL for the API
+        if (garmentImage.startsWith('data:image')) {
+          garmentImageFile = dataURLtoFile(garmentImage, 'garment.png');
+        } else if (garmentImage.startsWith('http')) {
+          // For URLs, we'll need to fetch the image first
+          const response = await fetch(garmentImage);
+          const blob = await response.blob();
+          garmentImageFile = new File([blob], 'garment.png', { type: blob.type });
+        } else {
+          // Assume it's a base64 string without the data URL prefix
+          garmentImageFile = dataURLtoFile(`data:image/png;base64,${garmentImage}`, 'garment.png');
+        }
+      } else {
+        setError('Invalid garment image format');
+        setLoading(false);
+        return;
+      }
+
+      formData.append('garment', garmentImageFile);
 
       // Include the token in the request headers
       const response = await axios.post('http://localhost:5000/api/tryon', formData, {
@@ -148,15 +179,29 @@ const TryOn = () => {
   };
 
   const dataURLtoFile = (dataUrl, filename) => {
-    const arr = dataUrl.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
+    if (!dataUrl || typeof dataUrl !== 'string') {
+      console.error("Invalid dataURL:", dataUrl);
+      throw new Error("Invalid data URL provided");
     }
-    return new File([u8arr], filename, { type: mime });
+    // Handle the case if the dataUrl doesn't have the data URL prefix
+    let processedDataUrl = dataUrl;
+    if (!dataUrl.includes('base64,')) {
+      processedDataUrl = `data:image/png;base64,${dataUrl}`;
+    }
+    try {
+      const arr = dataUrl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    } catch (error) {
+      console.error("Error converting data URL to file:", error);
+      throw new Error("Failed to convert data URL to file");
+    }  
   };
 
   return (

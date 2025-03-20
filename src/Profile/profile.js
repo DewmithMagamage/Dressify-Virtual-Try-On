@@ -6,7 +6,7 @@ import SettingsPopup from './settingsPopup';
 import './profile.css';
 
 // Image Modal Component
-const ImageModal = ({ image, isOpen, onClose }) => {
+const ImageModal = ({ image, isOpen, onClose, onDelete }) => {
   if (!isOpen) return null;
   
   return (
@@ -17,7 +17,13 @@ const ImageModal = ({ image, isOpen, onClose }) => {
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
         </button>
-        <img src={image} alt="Enlarged view" className="modal-image" />
+        <img src={image.fileUrl} alt="Enlarged view" className="modal-image" />
+        <button className="delete-image-btn" onClick={() => onDelete(image._id)}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
+          Delete
+        </button>
       </div>
     </div>
   );
@@ -47,6 +53,7 @@ const ProfilePage = () => {
   });
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -57,8 +64,8 @@ const ProfilePage = () => {
   };
   
   // Handler for opening the image modal
-  const handleImageClick = (imageUrl) => {
-    setSelectedImage(imageUrl);
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
     setModalOpen(true);
   };
   
@@ -66,6 +73,51 @@ const ProfilePage = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedImage(null);
+  };
+  
+  // Handler for deleting an image
+  const handleDeleteImage = async (imageId) => {
+    if (!imageId) {
+      console.error('No image ID provided for deletion');
+      return;
+    }
+    
+    if (!window.confirm('Are you sure you want to delete this image?')) {
+      return;
+    }
+    
+    setDeleteLoading(true);
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+      console.error('No token found');
+      setDeleteLoading(false);
+      return;
+    }
+    
+    try {
+      await axios.delete(`http://localhost:5000/api/images/${imageId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Update the images state by removing the deleted image
+      setImages(prevImages => {
+        return {
+          front: prevImages.front.filter(img => img._id !== imageId),
+          generated: prevImages.generated.filter(img => img._id !== imageId),
+          garment: prevImages.garment.filter(img => img._id !== imageId)
+        };
+      });
+      
+      // Close the modal
+      setModalOpen(false);
+      setSelectedImage(null);
+      setDeleteLoading(false);
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Failed to delete image. Please try again.');
+      setDeleteLoading(false);
+    }
   };
 
   // Handler for toggling edit mode
@@ -271,7 +323,7 @@ const ProfilePage = () => {
                         src={img.fileUrl} 
                         alt={`Generated outfit ${index + 1}`} 
                         className="history-img" 
-                        onClick={() => handleImageClick(img.fileUrl)}
+                        onClick={() => handleImageClick(img)}
                       />
                     </div>
                   ))
@@ -291,7 +343,7 @@ const ProfilePage = () => {
                         src={img.fileUrl} 
                         alt={`User photo ${index + 1}`} 
                         className="history-img" 
-                        onClick={() => handleImageClick(img.fileUrl)}
+                        onClick={() => handleImageClick(img)}
                       />
                     </div>
                   ))
@@ -314,6 +366,7 @@ const ProfilePage = () => {
         image={selectedImage}
         isOpen={modalOpen}
         onClose={handleCloseModal}
+        onDelete={handleDeleteImage}
       />
     </div>
   );

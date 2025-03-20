@@ -1,15 +1,29 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ThemeContext } from '../Components/ThemeContext';
 import "./body.css";
 
 const Body = () => {
   const { darkMode } = useContext(ThemeContext);
-
   const [uploadedImages, setUploadedImages] = useState([null]);
   const [errorMessage, setErrorMessage] = useState("");
   const [largeBoxIndex] = useState(0);
+  const [showProductMessage, setShowProductMessage] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { selectedProduct } = location.state || {};
+
+  // Show product message when component mounts if product exists
+  useEffect(() => {
+    if (selectedProduct) {
+      setShowProductMessage(true);
+      // Hide the message after 5 seconds
+      const timer = setTimeout(() => {
+        setShowProductMessage(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedProduct]);
 
   const handleFileChanges = (event, index) => {
     const file = event.target.files[0];
@@ -35,7 +49,12 @@ const Body = () => {
       setErrorMessage("Please upload an image.");
       return;
     }
-    navigate("/clothes", { state: { frontImage: uploadedImages[largeBoxIndex] } });
+    navigate("/clothes", { 
+      state: { 
+        frontImage: uploadedImages[largeBoxIndex],
+        selectedProduct: selectedProduct // Pass the selected product to Clothes.js
+      } 
+    });
   };
 
   return (
@@ -47,6 +66,15 @@ const Body = () => {
       </button>
       <h2 className="upload-title">Upload Front Image</h2>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
+
+      {/* Product selection message */}
+      {showProductMessage && selectedProduct && (
+        <div className="avatar-overlay">
+          <div className="avatar-message">
+            Upload your photo to try on: {selectedProduct.title}
+          </div>
+        </div>
+      )}
 
       <div className="upload-section">
         <div className="upload-container">
@@ -87,7 +115,11 @@ const Body = () => {
         </div>
 
         <div className="instructions-container">
-          <p className="body-text">Upload a clear front-facing photo to start!</p>
+          <p className="body-text">
+            {selectedProduct 
+              ? `Upload a clear front-facing photo to try on ${selectedProduct.title}!` 
+              : "Upload a clear front-facing photo to start!"}
+          </p>
           <div className="button-container">
             <button className={`next-step-btn ${darkMode ? 'dark-mode' : ''}`} onClick={handleNextStep}>Next</button>
           </div>

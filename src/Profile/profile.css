@@ -185,6 +185,9 @@ body {
   max-height: 80%;
   border-radius: 8px;
   background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* The Enlarged Image */
@@ -221,6 +224,29 @@ body {
   transform: scale(1.1);
 }
 
+/* Delete Button */
+.delete-image-btn {
+  margin-top: 16px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-image-btn:hover {
+  background-color: #d32f2f;
+}
+
+.delete-image-btn svg {
+  fill: white;
+}
+
 /* Images sections */
 .generated-images-section, .front-images-section {
   background-color: #f0f0f0;
@@ -228,17 +254,43 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   height: 100%;
+  width: 100%;
 }
 
 .images-scroll-container {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
-  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: 10px; /* Add padding for scrollbar */
+  white-space: nowrap;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f0f0f0;
+}
+
+/* Customizing scrollbar */
+.images-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.images-scroll-container::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.images-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.images-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .image-card {
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .history-img {
@@ -322,6 +374,26 @@ body {
 
 .dark-mode .modal-close-btn:hover {
   background-color: #444;
+}
+
+.dark-mode .delete-image-btn {
+  background-color: #d32f2f;
+}
+
+.dark-mode .delete-image-btn:hover {
+  background-color: #b71c1c;
+}
+
+.dark-mode .images-scroll-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark-mode .images-scroll-container::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.dark-mode .images-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }
 
 .dark-mode .form-group input {

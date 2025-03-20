@@ -1,17 +1,25 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ThemeContext } from '../Components/ThemeContext';
 import "./body.css";
 
 const Clothes = () => {
   const { darkMode } = useContext(ThemeContext);
-
   const [uploadedImages, setUploadedImages] = useState([null]);
   const [errorMessage, setErrorMessage] = useState("");
   const [largeBoxIndex, setLargeBoxIndex] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const { frontImage } = location.state || {};
+  const { frontImage, selectedProduct } = location.state || {};
+
+  // If a product was selected from the shop, use its image
+  useEffect(() => {
+    if (selectedProduct && selectedProduct.image) {
+      const newUploadedImages = [...uploadedImages];
+      newUploadedImages[0] = selectedProduct.image;
+      setUploadedImages(newUploadedImages);
+    }
+  }, [selectedProduct]);
 
   const handleFileChanges = (event, index) => {
     const file = event.target.files[0];
@@ -37,7 +45,16 @@ const Clothes = () => {
       setErrorMessage("Please upload an image.");
       return;
     }
-    navigate("/try-on", { state: { frontImage, garmentImage: uploadedImages[largeBoxIndex] } });
+    let garmentImage = uploadedImages[largeBoxIndex];
+
+    if (typeof garmentImage === 'string' && 
+      !garmentImage.startsWith('data:') && 
+      !garmentImage.startsWith('http')) {
+      // Format it as base64 if it isn't already
+      garmentImage = `data:image/png;base64,${garmentImage}`;
+    }
+
+    navigate("/try-on", { state: { frontImage, garmentImage } });
   };
 
   return (
@@ -47,7 +64,9 @@ const Clothes = () => {
           <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"></path>
         </svg>
       </button>
-      <h2 className="upload-title">Upload Clothing item</h2>
+      <h2 className="upload-title">
+        {selectedProduct ? `Try on: ${selectedProduct.title}` : "Upload Clothing Item"}
+      </h2>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       <div className="upload-section">
@@ -89,7 +108,11 @@ const Clothes = () => {
         </div>
 
         <div className="instructions-container">
-          <p className="clothes-text">Choose the outfit you'd like to try on and upload it here for a perfect preview</p>
+          <p className="clothes-text">
+            {selectedProduct 
+              ? `Your selected item from the shop is ready for try-on!` 
+              : "Choose the outfit you'd like to try on and upload it here for a perfect preview"}
+          </p>
           <div className="button-container">
             <button className="next-step-btn" onClick={handleNextStep}>Try On</button>
           </div>
