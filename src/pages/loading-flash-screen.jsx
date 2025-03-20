@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import logoonly from "../assets/logoonly.jpg"
-import backgroundImage from "../assets/BackgroundFlashScreen.jpg"
+import backgroundImage from "../assets/BackgroundFlashScreen2.jpg"
 
 const LoadingFlashScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0)
@@ -46,9 +46,9 @@ const LoadingFlashScreen = ({ onComplete }) => {
             <img
               src={backgroundImage || "/placeholder.svg"}
               alt="Background"
-              className="w-full h-full object-cover opacity-50"
+              className="w-full h-full object-cover opacity-800 "
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 via-transparent to-gray-100/50" />
+            <div  />
           </div>
 
           {/* Main Content */}
@@ -114,12 +114,12 @@ const LoadingFlashScreen = ({ onComplete }) => {
 
             {/* Slogan with Smooth Fade */}
             <motion.p
-              className="text-gray-700 text-xl mb-10 font-light italic"
+              className="text-white text-xl mb-10 font-light italic"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
             >
-              The Future of Fitting
+              <b>The Future of Fittin</b>
             </motion.p>
 
             {/* Loading Text with Elegant Dots */}
@@ -129,11 +129,11 @@ const LoadingFlashScreen = ({ onComplete }) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              <p className="text-gray-600 font-medium mr-2">Loading</p>
+              <p className="text-white font-medium mr-2">Loading</p>
               <motion.span
                 animate={{ opacity: [0, 1, 0] }}
                 transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                className="text-pink-600 font-bold"
+                className="text-white font-bold text-lg"
               >
                 ...
               </motion.span>
