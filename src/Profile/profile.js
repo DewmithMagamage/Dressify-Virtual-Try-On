@@ -5,9 +5,49 @@ import { ThemeContext } from '../Components/ThemeContext';
 import SettingsPopup from './settingsPopup';
 import './profile.css';
 
-// Image Modal Component
+// Simplified and improved base64 conversion function
+const arrayBufferToBase64 = (buffer) => {
+  // If null or undefined, return empty string
+  if (!buffer) return '';
+  
+  // Handle string that's already base64
+  if (typeof buffer === 'string') {
+    return buffer;
+  }
+  
+  try {
+    // Handle Buffer object directly
+    if (Buffer.isBuffer(buffer)) {
+      return buffer.toString('base64');
+    }
+    
+    // Handle ArrayBuffer
+    const bytes = new Uint8Array(buffer instanceof ArrayBuffer ? buffer : buffer.buffer || buffer);
+    let binary = '';
+    const len = bytes.byteLength;
+    
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    
+    return window.btoa(binary);
+  } catch (error) {
+    console.error('Error converting to base64:', error);
+    return '';
+  }
+};
+
+// Image Modal Component with improved base64 support
 const ImageModal = ({ image, isOpen, onClose, onDelete }) => {
-  if (!isOpen) return null;
+  if (!isOpen || !image) return null;
+  
+  // Create image source with simplified logic
+  let imageSource = image.fileUrl;
+  
+  if (image.data) {
+    // Simple conversion of data to image source
+    imageSource = `data:image/jpeg;base64,${typeof image.data === 'string' ? image.data : arrayBufferToBase64(image.data)}`;
+  }
   
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -17,7 +57,7 @@ const ImageModal = ({ image, isOpen, onClose, onDelete }) => {
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
         </button>
-        <img src={image.fileUrl} alt="Enlarged view" className="modal-image" />
+        <img src={imageSource} alt="Enlarged view" className="modal-image" />
         <button className="delete-image-btn" onClick={() => onDelete(image._id)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -54,6 +94,7 @@ const ProfilePage = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   const handleSettingsClick = () => {
     setIsSettingsOpen(true);
@@ -178,35 +219,64 @@ const ProfilePage = () => {
     }
   };
 
+  // Check connection to database
+  const checkDatabaseConnection = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/db-status');
+      console.log('Database connection status:', response.data);
+      if (!response.data.connected) {
+        setFetchError('Database connection issue. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error checking database connection:', error);
+    }
+  };
+
   useEffect(() => {
     // Fetch images from the backend
     const fetchImages = async () => {
       setLoading(true);
+      setFetchError(null);
       const token = localStorage.getItem('authToken');
       if (!token) {
         console.error('No token found');
         setLoading(false);
+        setFetchError('Authentication error. Please login again.');
         return;
       }
   
       try {
-        const response = await axios.get('http://localhost:5000/api/images', { 
+        console.log('Fetching images...');
+        
+        // Request with binary data
+        const response = await axios.get('http://localhost:5000/api/images?includeBinary=true', { 
           headers: { Authorization: `Bearer ${token}` } 
         });
-  
+        
+        console.log('Images response received, count:', response.data.images.length);
+        
+        // Check if we received binary data
+        if (response.data.images.length > 0) {
+          const firstImage = response.data.images[0];
+          console.log('First image data type:', typeof firstImage.data);
+          console.log('First image has data:', Boolean(firstImage.data));
+        }
+        
         // Organize images by type
-        const allImages = response.data.images || [];
         const imagesByType = {
-          front: allImages.filter(img => img.type === 'front'),
-          generated: allImages.filter(img => img.type === 'generated'),
-          garment: allImages.filter(img => img.type === 'garment')
+          front: response.data.images.filter(img => img.type === 'front'),
+          generated: response.data.images.filter(img => img.type === 'generated'),
+          garment: response.data.images.filter(img => img.type === 'garment')
         };
         
         setImages(imagesByType);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching images:', error);
+        console.error('Error fetching images:', error.response || error);
         setLoading(false);
+        setFetchError('Failed to fetch images. Please check your connection and try again.');
+        // Check if the database connection is the issue
+        checkDatabaseConnection();
       }
     };
 
@@ -231,6 +301,18 @@ const ProfilePage = () => {
     fetchProfile();
     fetchImages();
   }, []);
+
+  // Simplified function to get image source
+  const getImageSource = (image) => {
+    if (!image) return '';
+    
+    if (image.data) {
+      // Handle string or buffer data consistently
+      return `data:image/jpeg;base64,${typeof image.data === 'string' ? image.data : arrayBufferToBase64(image.data)}`;
+    }
+    
+    return image.fileUrl;
+  };
 
   return (
     <div className={`profile-container ${darkMode ? 'dark-mode' : ''}`}>
@@ -311,6 +393,11 @@ const ProfilePage = () => {
 
         {loading ? (
           <p>Loading your images...</p>
+        ) : fetchError ? (
+          <div className="error-message">
+            <p>{fetchError}</p>
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
         ) : (
           <div className="images-history-container">
             <div className={`generated-images-section ${darkMode ? 'dark-mode' : ''}`}>
@@ -318,9 +405,9 @@ const ProfilePage = () => {
               <div className="images-scroll-container">
                 {images.generated.length > 0 ? (
                   images.generated.map((img, index) => (
-                    <div key={`gen-${index}`} className="image-card">
+                    <div key={`gen-${img._id || index}`} className="image-card">
                       <img 
-                        src={img.fileUrl} 
+                        src={getImageSource(img)} 
                         alt={`Generated outfit ${index + 1}`} 
                         className="history-img" 
                         onClick={() => handleImageClick(img)}
@@ -338,9 +425,9 @@ const ProfilePage = () => {
               <div className="images-scroll-container">
                 {images.front.length > 0 ? (
                   images.front.map((img, index) => (
-                    <div key={`front-${index}`} className="image-card">
+                    <div key={`front-${img._id || index}`} className="image-card">
                       <img 
-                        src={img.fileUrl} 
+                        src={getImageSource(img)} 
                         alt={`User photo ${index + 1}`} 
                         className="history-img" 
                         onClick={() => handleImageClick(img)}
