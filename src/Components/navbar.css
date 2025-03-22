@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: url('../IMAGES/background.png') no-repeat center center/cover;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar {
+    position: fixed;
+    top: 25%; 
+    left: 5%;
+    width: 55px; 
+    height: 50vh; 
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.7); 
+    padding-top: 20px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.logo {
+    position: fixed;
+    top: 25px;
+    left: 3%;
+    height: auto;
+    width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    margin: 20px;
+    padding: 5px;
+}
+
+.logo img{
+    width: 100%;
+    height: auto;
+}
+
+.nav-icons {
+    height: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-btn, .tryOn-btn, .shop-btn, .profile-btn {
+    background-color: transparent;
+    width: 42px;
+    height: 42px;
+    border: solid 0px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    padding: 10px;
+}
+
+.nav-icons svg {
+    fill: white;
+}
+
+.home-btn:hover, .tryOn-btn:hover, .shop-btn:hover, .profile-btn:hover {
+    transform: scale(1.1);
+    background-color:rgba(247, 131, 176, 0.801);
+} 
+
+.home-btn.active, .tryOn-btn.active, .shop-btn.active, .profile-btn.active {
+    background-color: rgba(247, 131, 176, 0.801);
+    transform: scale(1.1); 
+}
+
+/* Add dark mode */
+body.dark-mode::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.904); 
+    z-index: -1; 
+  }
+
+/* Responsive Adjustments*/ 
+@media (max-width: 768px) {
+    .navbar {
+        top: 20%;
+        left: 5%;
+        width: 50px;
+        height: 45vh;
+    }
+
+    .logo {
+        top: 10px;
+        left: 3%;
+        width: 100px;
+    }
+
+    .nav-icons {
+        padding: 15px 0;
+    }
+
+    .home-btn, .tryOn-btn, .shop-btn, .profile-btn {
+        width: 35px;
+        height: 35px;
+        padding: 8px;
+    }
+}

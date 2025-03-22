@@ -1,0 +1,180 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('../IMAGES/background.png') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .container {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    width: 650px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+  }
+  
+  h2 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  form {
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .social-login {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .social-login img {
+    width: 20px;
+    height: 20px;
+    margin-right: 20px;
+  }
+
+  .google-btn, .facebook-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .google-btn {
+    background: #ffffffa9;
+    color: black;
+  }
+  
+  .google-btn:hover {
+    background: #ddd;
+  }
+  
+  .facebook-btn {
+    background: #1877F2;
+    color: white;
+  }
+  
+  .facebook-btn:hover {
+    background: #145db2;
+  }
+  
+  .or-divider {
+    color: white;
+    margin: 10px 0;
+  }
+  
+  .input-field {
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+    border-bottom: 2px solid white;
+    background: none;
+  }
+  
+  .input-field input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    outline: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: white;
+  }
+
+  .input-field input::placeholder {
+    color: white;
+  }
+  
+  .input-field .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: white;
+  }
+
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-webkit-credentials-auto-fill-button {
+      filter: invert(1); 
+      opacity: 1;
+  }
+  
+  .login-btn {
+    background: #ffffffa9;
+    color: black;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+  }
+  
+  .login-btn:hover {
+    background: #ddd;
+  }
+  
+  .signup-link {
+    color: #fff;
+    font-size: 14px;
+  }
+  
+  .signup-link a {
+    color: #42a5f5;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  .language-dropdown {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .language-dropdown select {
+    background: none;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .language-dropdown select option {
+    background: none;
+    color: black;
+    outline: none;
+  }
+
+  .language-dropdown select option:hover {
+    background: #ffffffa9;
+    color: white;
+  }

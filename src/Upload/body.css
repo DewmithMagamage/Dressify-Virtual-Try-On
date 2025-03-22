@@ -1,0 +1,318 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background: url('../IMAGES/background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+}
+
+/* Frosted Glass Effect */
+.frosted-container {
+  background: rgba(0, 0, 0, 0.7); 
+  position: relative;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  max-width: 1200px;
+  min-height: 80vh;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.upload-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
+}
+
+.upload-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.upload-box {
+  border: 4px solid #757171;
+  width: 120px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.upload-box.large {
+  border: 4px dashed #757171;
+  width: 250px;
+  height: 320px;
+  transition: all 0.3s;
+}
+
+.upload-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.upload-box:hover {
+  border-color: rgb(187, 19, 117);
+}
+
+.upload-box:hover span {
+  color: rgb(187, 19, 117);
+}
+
+.upload-box:hover .hover-overlay {
+  display: flex;
+}
+
+.upload-box span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  font-weight: bold;
+}
+
+.instructions-container {
+  width: 100%;
+  max-width: 600px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  top: 10%;
+  transform: translateY(-10px);
+}
+
+.instructions-container .body-text{
+  font-size: 1.2rem;
+  color: white;
+  padding: 15px;
+  margin-bottom: 20px;
+}  
+
+.instructions-container .clothes-text{
+  width: 100%;
+  max-width: 450px;
+  font-size: 1.2rem;
+  color: white;
+  padding: 9px;
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+  white-space: normal;
+}  
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.next-step-btn, .save-btn {
+  padding: 10px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.next-step-btn {
+  background-color:  rgb(238, 66, 132);
+  color: white;
+}
+
+.next-step-btn:hover {
+  background-color:  rgb(187, 19, 117);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-btn {
+  background: rgba(77, 71, 71, 0.863);
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.delete-icon {
+  width: 20px;
+  height: 20px;
+  fill: black;
+  transition: transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: black;
+}
+
+.delete-btn:hover .delete-icon {
+  fill: white;
+  transform: scale(1.1);
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-arrow-icon {
+  width: 30px;
+  height: 30px;
+  fill: white;
+}
+
+.avatar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(139, 133, 133, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.avatar-message{
+  border-radius: 10px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  max-width: 80%;
+}
+
+.avatar-overlay, .avatar-message {
+  animation: fadeIn 0.5s ease-out, fadeOut 0.5s ease-in 2.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*Dark mode*/
+.frosted-container.dark-mode {
+  background:rgba(34, 33, 33, 0.849); 
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+  .frosted-container {
+    width: 80%;
+    min-height: auto;
+    padding: 15px;
+    margin-left: 20%;
+  }
+
+  .upload-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .upload-box {
+    width: 110px;
+    height: 130px;
+  }
+
+  .upload-title{
+    padding-left: 20px;
+    font-size: 1.5rem;
+  }
+
+  .upload-box.large {
+    width: 210px;
+    height: 270px;
+  }
+
+  .instructions-container .body-text,
+  .instructions-container .clothes-text {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .next-step-btn, .save-btn {
+    font-size: 1.1rem;
+    padding: 9px 22px;
+  }
+
+  .back-button {
+    top: 18px;
+    left: 18px;
+  }
+
+  .back-arrow-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
