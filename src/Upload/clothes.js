@@ -7,7 +7,6 @@ const Clothes = () => {
   const { darkMode } = useContext(ThemeContext);
   const [uploadedImages, setUploadedImages] = useState([null]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [largeBoxIndex, setLargeBoxIndex] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const { frontImage, selectedProduct } = location.state || {};
