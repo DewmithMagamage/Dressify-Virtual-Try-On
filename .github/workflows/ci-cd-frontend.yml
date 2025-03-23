@@ -1,5 +1,4 @@
 name: Frontend CI/CD
-
 on:
   push:
     branches:
@@ -7,25 +6,21 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-
       - name: Install Dependencies
-        run: npm install
-
+        run: |
+          npm install
+          npm install --save-dev @testing-library/react
       - name: Run Tests
         run: npm test
-
       - name: Build Frontend App (Port 3000)
         run: |
           npm run build
