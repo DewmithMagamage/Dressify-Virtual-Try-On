@@ -93,6 +93,7 @@ const ProfilePage = () => {
   });
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [fetchError, setFetchError] = useState(null);
 
   const handleSettingsClick = () => {
