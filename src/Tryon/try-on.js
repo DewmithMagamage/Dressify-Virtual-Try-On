@@ -25,6 +25,13 @@ const TryOn = () => {
     }
   }, [frontImage, garmentImage]);
 
+   // Add a useEffect that clears error message when generatedImage is set
+  useEffect(() => {
+    if (generatedImage) {
+      setError('');
+    }
+  }, [generatedImage]);
+
   const handleTryOn = async () => {
     setLoading(true);
     setError('');
