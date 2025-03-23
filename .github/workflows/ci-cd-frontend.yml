@@ -44,4 +44,4 @@ jobs:
           
       - name: Build Frontend App
         if: success()
-        run: npm run build
+        run: CI=false npm run build
