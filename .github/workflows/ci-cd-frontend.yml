@@ -11,17 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '14'
+          
+      - name: Check directory structure
+        run: ls -la
+        
       - name: Install Dependencies
         run: |
           npm install
           npm install --save-dev @testing-library/react
           npm install react-router-dom
-      - name: Run Tests
-        run: npm test
+          
+      - name: Verify react-router-dom installation
+        run: |
+          npm list react-router-dom
+          
+      - name: Run Tests with custom Jest config
+        run: |
+          npm test -- --transformIgnorePatterns "node_modules/(?!react-router|@testing-library)"
+          
       - name: Build Frontend App (Port 3000)
+        if: success()
         run: |
           npm run build
