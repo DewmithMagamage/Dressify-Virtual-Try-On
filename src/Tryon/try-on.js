@@ -98,7 +98,11 @@ const TryOn = () => {
     } catch (err) {
       console.error("API error:", err);
       if (err.response && err.response.data && err.response.data.error) {
-        setError(`Server error: ${err.response.data.error}`);
+        if (err.response.data.error.includes("exact files is already being processed")) {
+          setError("Your request is being processed. Please wait a moment.");
+        } else {
+          setError(`Server error: ${err.response.data.error}`); 
+        }  
       } else if (err.response && err.response.status === 401) {
         setError('Authentication failed. Please log in again.');
       } else {
