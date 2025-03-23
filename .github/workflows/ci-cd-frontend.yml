@@ -15,22 +15,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20' # Updated to a more recent Node version
           
-      - name: Check directory structure
-        run: ls -la
-        
       - name: Install Dependencies
         run: |
-          npm install
-          npm install --save-dev @testing-library/react
-          npm install react-router-dom
+          npm ci
           
-      - name: Verify react-router-dom installation
-        run: |
-          npm list react-router-dom
-          
-      - name: Run Tests with custom Jest config
+      - name: Run Tests
         run: |
           npm test -- --transformIgnorePatterns "node_modules/(?!react-router|@testing-library)"
           
